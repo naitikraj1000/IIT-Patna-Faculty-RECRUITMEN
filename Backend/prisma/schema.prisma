@@ -1,0 +1,199 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Entry {
+  id         Int      @id @default(autoincrement())
+  content    String
+  updatedAt  DateTime @updatedAt
+  snapshotId String
+  fieldId    Int?
+  entryId    Int?
+  isFile     Boolean  @default(false)
+  required   Boolean  @default(false)
+  Entry      Entry?   @relation("EntryToEntry", fields: [entryId], references: [id])
+  entries    Entry[]  @relation("EntryToEntry")
+}
+
+model TemplateEntries {
+  id        Int      @id @default(autoincrement())
+  content   String
+  updatedAt DateTime @updatedAt
+  fieldId   Int?
+  isFile    Boolean  @default(false)
+}
+
+model FailedLoginAttempt {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  timestamp DateTime @default(now())
+  isblocked Boolean  @default(false)
+  attempts  Int      @default(0)
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id                   String                 @id @default(cuid())
+  name                 String
+  email                String                 @unique
+  password             String
+  verified             Boolean                @default(false)
+  PasswordResetRequest PasswordResetRequest[]
+  Referral             Referral[]
+  VerificationRequest  VerificationRequest[]
+  failedLoginAttempts  FailedLoginAttempt[]
+  applications         Application[]
+  JobPosting           JobPosting[]
+}
+
+model Application {
+  id                String              @id @default(cuid())
+  userId            String
+  status            ApplicationStatus   @default(PENDING)
+  completepercent   Float               @default(0)
+  JobPostingId      String
+  user              User                @relation(fields: [userId], references: [id])
+  JobPosting        JobPosting          @relation(fields: [JobPostingId], references: [id])
+  ApplicationField1 ApplicationField1[]
+  ApplicationField2 ApplicationField2[]
+  ApplicationField3 ApplicationField3[]
+  ApplicationField4 ApplicationField4[]
+  ApplicationField5 ApplicationField5[]
+  ApplicationField6 ApplicationField6[]
+}
+
+enum ApplicationStatus {
+  PENDING
+  REJECTED
+  ACCEPTED
+}
+
+model ApplicationField1 {
+  id              String @id @default(cuid())
+  description     String @default("Biodata")
+  completepercent Float  @default(0)
+
+  applicationId String
+
+  Application Application @relation(fields: [applicationId], references: [id])
+}
+
+model ApplicationField2 {
+  id              String @id @default(cuid())
+  description     String @default("Education & Employment")
+  completepercent Float  @default(0)
+  applicationId   String
+
+  Application Application @relation(fields: [applicationId], references: [id])
+}
+
+model ApplicationField3 {
+  id              String @id @default(cuid())
+  description     String @default("Project / Publication")
+  completepercent Float  @default(0)
+  applicationId   String
+
+  Application Application @relation(fields: [applicationId], references: [id])
+}
+
+model ApplicationField4 {
+  id              String @id @default(cuid())
+  description     String @default("Teaching Experience")
+  completepercent Float  @default(0)
+  applicationId   String
+
+  Application Application @relation(fields: [applicationId], references: [id])
+}
+
+model ApplicationField5 {
+  id              String @id @default(cuid())
+  description     String @default("Awards and Recognitions")
+  completepercent Float  @default(0)
+  applicationId   String
+
+  Application Application @relation(fields: [applicationId], references: [id])
+}
+
+model ApplicationField6 {
+  id              String @id @default(cuid())
+  description     String @default("Additional Info")
+  completepercent Float  @default(0)
+  applicationId   String
+
+  Application Application @relation(fields: [applicationId], references: [id])
+}
+
+model PasswordResetRequest {
+  id        String   @id @default(cuid())
+  userId    String
+  createdAt DateTime @default(now())
+  count     Int      @default(0)
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Referral {
+  id        String          @id @default(cuid())
+  userId    String
+  submitted Boolean         @default(false)
+  email     String?         @unique
+  address   String?
+  user      User            @relation(fields: [userId], references: [id])
+  entries   ReferralEntry[]
+}
+
+model ReferralField {
+  id            Int             @id @default(autoincrement())
+  title         String
+  description   String?
+  type          String
+  allowFile     Boolean         @default(false)
+  ReferralEntry ReferralEntry[]
+}
+
+model ReferralEntry {
+  id         Int           @id @default(autoincrement())
+  content    String
+  updatedAt  DateTime      @updatedAt
+  fieldId    Int
+  referralId String?
+  isFile     Boolean       @default(false)
+  field      ReferralField @relation(fields: [fieldId], references: [id])
+  Referral   Referral?     @relation(fields: [referralId], references: [id])
+}
+
+model Admin {
+  id       String @id @default(cuid())
+  name     String
+  email    String @unique
+  password String
+
+  @@index([email])
+}
+
+model JobPosting {
+  id           String        @id @default(cuid())
+  department   String
+  position     String
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+  Applications Application[]
+}
+
+model VerificationRequest {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  userId    String
+  count     Int      @default(0)
+  User      User     @relation(fields: [userId], references: [id])
+}
