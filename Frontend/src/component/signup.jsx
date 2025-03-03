@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
-import "./signup.css";
+import styles from "./signup.module.css"; // Import CSS module
 
 const generateCaptcha = () => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -33,7 +33,8 @@ export default function SignUp() {
   const [captchaInput, setCaptchaInput] = useState("");
   const [captchaText, setCaptchaText] = useState("");
   const [randomStyle, setRandomStyle] = useState({});
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // State for password visibility
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
   useEffect(() => {
     refreshCaptcha();
@@ -60,17 +61,19 @@ export default function SignUp() {
   };
 
   return (
-    <div className="container">
-      <div className="signup-box">
-        <img src="/logo.png" alt="IIT Patna Logo" className="logo" />
+    <div className={styles.container}>
+      <div className={styles.signupBox}>
+        <img src="/logo.png" alt="IIT Patna Logo" className={styles.logo} />
         <h2>Sign Up</h2>
         <form onSubmit={handleSignUp}>
           <label>Name</label>
           <input type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required />
+          
           <label>Email</label>
           <input type="email" placeholder="test@test.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          
           <label>Password</label>
-          <div className="password-box">
+          <div className={styles.passwordBox}>
             <input
               type={isPasswordVisible ? "text" : "password"}
               placeholder="*******"
@@ -78,33 +81,35 @@ export default function SignUp() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <span className="password-toggle" onClick={() => setIsPasswordVisible(!isPasswordVisible)}>
+            <span className={styles.passwordToggle} onClick={() => setIsPasswordVisible(!isPasswordVisible)}>
               {isPasswordVisible ? <FaEyeSlash /> : <FaEye />}
             </span>
           </div>
+
           <label>Confirm Password</label>
-          <div className="password-box">
+          <div className={styles.passwordBox}>
             <input
-              type={isPasswordVisible ? "text" : "password"}
+              type={isConfirmPasswordVisible ? "text" : "password"}
               placeholder="*******"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
-            <span className="password-toggle" onClick={() => setIsPasswordVisible(!isPasswordVisible)}>
-              {isPasswordVisible ? <FaEyeSlash /> : <FaEye />}
+            <span className={styles.passwordToggle} onClick={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}>
+              {isConfirmPasswordVisible ? <FaEyeSlash /> : <FaEye />}
             </span>
           </div>
-          <div className="captcha-box">
-            <p className="captcha-text">
+
+          <div className={styles.captchaBox}>
+            <p className={styles.captchaText}>
               {captchaText.split("").map((char, index) => (
                 <span key={index} style={randomStyle}>{char}</span>
               ))}
             </p>
-            <button type="button" onClick={refreshCaptcha} className="refresh-captcha">↻</button>
+            <button type="button" onClick={refreshCaptcha} className={styles.refreshCaptcha}>↻</button>
           </div>
           <input type="text" placeholder="Enter Captcha" value={captchaInput} onChange={(e) => setCaptchaInput(e.target.value)} required />
-          <button type="submit" className="signup-btn">Sign Up</button>
+          <button type="submit" className={styles.signupBtn}>Sign Up</button>
         </form>
         <p><a href="/signin">Already have an Account? Login</a></p>
       </div>

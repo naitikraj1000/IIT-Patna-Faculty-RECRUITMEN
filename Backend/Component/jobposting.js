@@ -52,5 +52,22 @@ async function getjobposting(req, res) {
     }
 }
 
+
+async function deletejobposting(req, res) {
+    const user_id = req.user_id;
+    const { job_id } = req.body;
+    try {
+        let jobposting = await prismadb.jobPosting.deleteMany({
+            where: {
+                userId: user_id,
+                id: job_id
+            }
+        });
+        return res.status(200).json({ message: "Job deleted successfully" });
+    } catch (error) {
+        return res.status(500).json({ message: error });
+    }
+}
+
 export default jobposting;
-export { getjobposting };
+export { getjobposting,deletejobposting };

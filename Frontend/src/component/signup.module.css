@@ -1,29 +1,28 @@
-/* signup.css */
 
-body {
+*{
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+.container {
   font-family: Arial, sans-serif;
-  background: url('../../public/IITPADMIN.jpg') no-repeat center center/cover;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  background: url("../../public/IITPADMIN.jpg") no-repeat center center/cover;
   height: 100vh;
   margin: 0;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   width: 100%;
 }
 
-.signup-box {
-  background: rgba(0, 0, 0, 0.75); /* Dark transparent background */
+.signupBox {
+  background: rgba(0, 0, 0, 0.75);
   color: white;
   padding: 30px;
   border-radius: 10px;
   text-align: center;
-  width: 400px;
+  width: 450px; /* Keep same width */
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
 }
 
@@ -80,7 +79,7 @@ button:hover {
   background-color: #0056b3;
 }
 
-.captcha-box {
+.captchaBox {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -90,14 +89,14 @@ button:hover {
   margin-bottom: 10px;
 }
 
-.captcha-text {
+.captchaText {
   font-weight: bold;
   font-size: 18px;
   letter-spacing: 2px;
   color: red;
 }
 
-.refresh-captcha {
+.refreshCaptcha {
   background: #007bff;
   color: white;
   border: none;
@@ -107,69 +106,24 @@ button:hover {
   font-size: 14px;
 }
 
-.refresh-captcha:hover {
-  background: #0056b3;
-}
-
-.password-box {
+.passwordBox {
+  width: 100%;
   position: relative;
 }
 
-.password-box input {
-  width: 100%;
-  padding-right: 40px; /* Space for eye icon */
+.passwordBox input {
 }
 
-.password-toggle {
+.passwordToggle {
   position: absolute;
-  right: 10px;
   top: 50%;
+  right: -10px;
   transform: translateY(-50%);
   cursor: pointer;
   color: white;
+  z-index: 100;
 }
 
-.forgot-password,
-.switch-to-login {
-  color: #00aaff;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-.forgot-password:hover,
-.switch-to-login:hover {
-  text-decoration: underline;
-}
-
-a {
-  color: #00aaff;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-.password-box {
-    position: relative;
-  }
-  
-  .password-toggle {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #666;
-  }
-  
-  .password-toggle:hover {
-    color: #000;
-  }
-
-/* Responsive */
-@media (max-width: 450px) {
-  .signup-box {
-    width: 90%;
-  }
+.passwordToggle:hover {
+  color: #ddd;
 }

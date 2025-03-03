@@ -1,0 +1,386 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-bg: #1f2b3d;
+  --secondary-bg: #263347;
+  --nav-bg: #2c3b50;
+  --nav-hover: #374a64;
+  --progress-bg: #4d5b70;
+  --progress-fill: #3add9e;
+  --exit-btn: #f5a5a5;
+  --submit-btn: #7de2c3;
+  --preview-btn: #80c9f2;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+.appContainer {
+  display: flex;
+  background-color: var(--primary-bg);
+  color: white;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  width: 22%;
+  min-width: 250px;
+  background-color: var(--primary-bg);
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.logoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.logo {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 10px;
+  object-fit: contain;
+}
+
+.portalTitle {
+  font-size: 16px;
+  text-align: center;
+  margin-top: 5px;
+  color: white;
+  font-weight: normal;
+}
+
+/* Navigation Menu */
+.navMenu {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.navItem {
+  padding: 15px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: white;
+  background-color: var(--nav-bg);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+}
+
+.navItem:hover {
+  background-color: var(--nav-hover);
+}
+
+.progressBar {
+  height: 8px;
+  background-color: var(--progress-bg);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: var(--progress-fill);
+  transition: width 0.3s ease-in-out;
+}
+
+/* Sidebar Actions */
+.sidebarActions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.btn {
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+  font-weight: bold;
+}
+
+.exitBtn {
+  background-color: var(--exit-btn);
+  color: #333;
+}
+
+.exitBtn:hover {
+  background-color: #f28b8b;
+}
+
+.submitBtn {
+  background-color: var(--submit-btn);
+  color: #333;
+}
+
+.submitBtn:hover {
+  background-color: #5fcca7;
+}
+
+.previewBtn {
+  background-color: var(--preview-btn);
+  color: #333;
+}
+
+.previewBtn:hover {
+  background-color: #67b4dd;
+}
+
+/* Main Content Area */
+.mainContent {
+  flex-grow: 1;
+  padding: 20px 30px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.pageTitle {
+  text-align: center;
+  padding: 15px 0;
+  font-size: 32px;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.contentContainer {
+  background-color: var(--secondary-bg);
+  border-radius: 12px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-height: calc(100vh - 120px);
+  overflow: hidden;
+}
+
+/* Add this class to make the Outlet component scrollable */
+.contentContainer > :first-child {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-bottom: 20px; /* Add some padding to prevent content from being hidden behind buttons */
+}
+
+/* Mobile menu button - hidden by default */
+.menuToggle {
+  display: none;
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  z-index: 1000;
+  background-color: var(--primary-bg);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Form Buttons */
+.formButtons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  margin-top: 20px;
+  position: sticky;
+  bottom: 0;
+  background-color: var(--secondary-bg);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 10;
+}
+
+.saveBtn {
+  background-color: transparent;
+  color: #00ced1;
+  border: 2px solid #00ced1;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 10px 20px;
+  transition: all 0.3s ease;
+}
+
+.saveBtn:hover {
+  background-color: rgba(0, 206, 209, 0.1);
+}
+
+.nextBtn {
+  background-color: #00ced1;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.nextBtn:hover {
+  background-color: #00bfc1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive styles */
+@media screen and (max-width: 1024px) {
+  .sidebar {
+    width: 30%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .appContainer {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    position: relative;
+    padding: 15px;
+    transition: max-height 0.3s ease-in-out;
+    overflow: hidden;
+  }
+
+  .sidebar.collapsed {
+    max-height: 100px;
+  }
+
+  .sidebar.expanded {
+    max-height: 100vh;
+  }
+
+  .menuToggle {
+    display: block;
+  }
+
+  .logoContainer {
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 15px;
+  }
+
+  .logo {
+    width: 60px;
+    height: 60px;
+    margin-right: 10px;
+    margin-bottom: 0;
+  }
+
+  .portalTitle {
+    text-align: left;
+    font-size: 14px;
+  }
+
+  .navMenu {
+    gap: 8px;
+  }
+
+  .navItem {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .mainContent {
+    padding: 15px;
+  }
+
+  .pageTitle {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+
+  .contentContainer {
+    padding: 15px;
+  }
+
+  .btn {
+    padding: 10px 15px;
+    font-size: 13px;
+  }
+  
+  .formButtons {
+    flex-direction: row;
+    padding: 12px 0;
+  }
+  
+  .saveBtn, .nextBtn {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .sidebar {
+    padding: 10px;
+  }
+
+  .logoContainer {
+    margin-bottom: 10px;
+  }
+
+  .logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .portalTitle {
+    font-size: 12px;
+  }
+
+  .navItem {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .mainContent {
+    padding: 10px;
+  }
+
+  .pageTitle {
+    font-size: 20px;
+    padding: 10px 0;
+  }
+
+  .contentContainer {
+    padding: 12px;
+  }
+  
+  .formButtons {
+    flex-direction: row;
+    gap: 8px;
+  }
+  
+  .saveBtn, .nextBtn {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+}

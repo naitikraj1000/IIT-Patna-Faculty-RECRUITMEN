@@ -2,7 +2,7 @@ import { Router } from "express";
 import { forgetpassword, resetpassword,verifytoken, emailverification, signin, signout, signup } from "../Component/authentication.js";
 import authenticate from "../Component/authentication.js";
 import jobposting from "../Component/jobposting.js";
-import {getjobposting} from "../Component/jobposting.js";
+import {getjobposting,deletejobposting} from "../Component/jobposting.js";
 const router = Router();
 
 
@@ -17,6 +17,7 @@ router.get("/signout", signout);
 router.get("/verifytoken", verifytoken);
 router.post("/jobposting",authenticate, jobposting);
 router.get("/getjobposting",authenticate, getjobposting);
+router.delete("/deletejobposting",authenticate, deletejobposting);
 router.post("/forgetpassword", forgetpassword);
 router.post("/resetpassword", resetpassword);
 router.get("/emailverification/:token", emailverification);
