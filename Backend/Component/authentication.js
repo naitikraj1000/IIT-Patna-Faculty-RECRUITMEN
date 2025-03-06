@@ -25,37 +25,36 @@ async function authenticate(req, res,next) {
 
 }
 
+
 async function verifytoken(req, res) {
-
-    const token = req.cookies.token;
-    console.log("Verifying Tokens",token);
-    
-    if (!token) {
-        return res.status(401).json({ message: "No token provided" });
-    }
-    
-
-    let user_id = null;
-    jsonwebtoken.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-
-        if (err) {
-            return res.status(401).json({ message: "Unauthorized" });
+    try {
+        const token = req.cookies.token;
+        console.log("Verifying Token:", token);
+        
+        if (!token) {
+            return res.status(401).json({ message: "No token provided" });
         }
 
-        user_id = decoded.id;
+        // Verify token synchronously
+        const decoded = jsonwebtoken.verify(token, process.env.JWT_SECRET);
+        
+        console.log("User id:", decoded.id);
+       
+    
+        return res.status(200).json({ message: "Token verified", user_id: decoded.id });
 
-    });
-
-    console.log("User id", user_id);
-    // return res.status(200).json({ message: "User logged in successfully", user_id: user.id });
-
-    return res.status(200).json({ message: "Token verified", user_id: user_id });
-
+    } catch (err) {
+        console.log(err);
+        return res.status(401).json({ message: "Unauthorized" });
+    }
 }
+
 
 async function signup(req, res) {
     const { name, email, password } = req.body;
 
+
+     console.log(" Signup", name, email, password)
 
     if (!name || !email || !password) {
         return res.status(400).json({ message: "Please enter all fields" });
@@ -114,6 +113,8 @@ async function signin(req, res) {
     if (!email || !password) {
         return res.status(400).json({ message: "Please enter all fields" });
     }
+
+  
 
     try {
         let user = await prismadb.user.findUnique({

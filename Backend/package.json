@@ -28,6 +28,6 @@
     "ua-parser-js": "^2.0.0"
   },
   "devDependencies": {
-    "prisma": "^6.3.0"
+    "prisma": "^6.4.1"
   }
 }

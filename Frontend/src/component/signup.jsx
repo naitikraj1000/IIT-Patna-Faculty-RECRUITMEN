@@ -4,7 +4,8 @@ import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
 import styles from "./signup.module.css"; // Import CSS module
 
 const generateCaptcha = () => {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let captcha = "";
   for (let i = 0; i < 6; i++) {
     captcha += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -34,7 +35,8 @@ export default function SignUp() {
   const [captchaText, setCaptchaText] = useState("");
   const [randomStyle, setRandomStyle] = useState({});
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+    useState(false);
 
   useEffect(() => {
     refreshCaptcha();
@@ -56,8 +58,7 @@ export default function SignUp() {
       refreshCaptcha();
       return;
     }
-    alert("Signup Successful (Handle backend logic separately)");
-    navigate("/home");
+    navigate("/");
   };
 
   return (
@@ -67,11 +68,23 @@ export default function SignUp() {
         <h2>Sign Up</h2>
         <form onSubmit={handleSignUp}>
           <label>Name</label>
-          <input type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required />
-          
+          <input
+            type="text"
+            placeholder="Full Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+
           <label>Email</label>
-          <input type="email" placeholder="test@test.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          
+          <input
+            type="email"
+            placeholder="test@test.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
           <label>Password</label>
           <div className={styles.passwordBox}>
             <input
@@ -81,7 +94,10 @@ export default function SignUp() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <span className={styles.passwordToggle} onClick={() => setIsPasswordVisible(!isPasswordVisible)}>
+            <span
+              className={styles.passwordToggle}
+              onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+            >
               {isPasswordVisible ? <FaEyeSlash /> : <FaEye />}
             </span>
           </div>
@@ -95,7 +111,12 @@ export default function SignUp() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
-            <span className={styles.passwordToggle} onClick={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}>
+            <span
+              className={styles.passwordToggle}
+              onClick={() =>
+                setIsConfirmPasswordVisible(!isConfirmPasswordVisible)
+              }
+            >
               {isConfirmPasswordVisible ? <FaEyeSlash /> : <FaEye />}
             </span>
           </div>
@@ -103,15 +124,33 @@ export default function SignUp() {
           <div className={styles.captchaBox}>
             <p className={styles.captchaText}>
               {captchaText.split("").map((char, index) => (
-                <span key={index} style={randomStyle}>{char}</span>
+                <span key={index} style={randomStyle}>
+                  {char}
+                </span>
               ))}
             </p>
-            <button type="button" onClick={refreshCaptcha} className={styles.refreshCaptcha}>↻</button>
+            <button
+              type="button"
+              onClick={refreshCaptcha}
+              className={styles.refreshCaptcha}
+            >
+              ↻
+            </button>
           </div>
-          <input type="text" placeholder="Enter Captcha" value={captchaInput} onChange={(e) => setCaptchaInput(e.target.value)} required />
-          <button type="submit" className={styles.signupBtn}>Sign Up</button>
+          <input
+            type="text"
+            placeholder="Enter Captcha"
+            value={captchaInput}
+            onChange={(e) => setCaptchaInput(e.target.value)}
+            required
+          />
+          <button type="submit" className={styles.signupBtn}>
+            Sign Up
+          </button>
         </form>
-        <p><a href="/signin">Already have an Account? Login</a></p>
+        <p>
+          <a href="/signin">Already have an Account? Login</a>
+        </p>
       </div>
     </div>
   );

@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import styles from "./application.module.css";
-
+import { useDispatch } from "react-redux";
+import { saveprogress } from "../../redux/infromationslice";
 function Application() {
   const navigate = useNavigate();
   const [menuExpanded, setMenuExpanded] = useState(false);
   const [pagetitle, setPagetitle] = useState("BIODATA");
-
+  const dispatch = useDispatch();
+  
   function capitalizeWords(str) {
     return str.toUpperCase();
   }
@@ -146,7 +148,9 @@ function Application() {
         <div className={styles.contentContainer}>
           <Outlet />
           <div className={styles.formButtons}>
-            <button type="button" className={styles.saveBtn}>
+            <button type="button" className={styles.saveBtn} onClick={() => {
+              dispatch(saveprogress());
+            }}>
               Save Progress
             </button>
             <button type="submit" className={styles.nextBtn}>

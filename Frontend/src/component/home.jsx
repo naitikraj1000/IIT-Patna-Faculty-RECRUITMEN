@@ -3,12 +3,14 @@ import { departments, positions } from "../option/jobposting";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styles from "./home.module.css";
+import { useNavigate } from "react-router";
 
 export default function Home() {
   const [open, setOpen] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedPosition, setSelectedPosition] = useState("");
   const [jobPostings, setJobPostings] = useState([]);
+  const navigate = useNavigate();
 
   const backendurl = import.meta.env.VITE_BACKEND_URL;
 
@@ -87,7 +89,9 @@ export default function Home() {
               </div>
 
               <div className={styles.jobActions}>
-                <button className={styles.openButton}>Open</button>
+                <button className={styles.openButton} onClick={ ()=>{
+                  navigate(`/application/${job.id}/form1`);
+                }}>Open</button>
                 <button
                   className={styles.deleteButton}
                   onClick={() => handleJobDelete(job.id)}

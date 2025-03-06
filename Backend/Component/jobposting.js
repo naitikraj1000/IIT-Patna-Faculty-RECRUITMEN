@@ -69,5 +69,9 @@ async function deletejobposting(req, res) {
     }
 }
 
+
+async function saveapplicationform(req, res) {
+
+}
 export default jobposting;
-export { getjobposting,deletejobposting };
+export { getjobposting,deletejobposting,saveapplicationform };

@@ -78,9 +78,33 @@ model ApplicationField1 {
   description     String @default("Biodata")
   completepercent Float  @default(0)
 
-  applicationId String
+  fullName                 String
+  dateOfBirth              DateTime
+  proofOfDateOfBirth       String
+  gender                   String // Should be one of: 'Male', 'Female', 'Other'
+  maritalStatus            String // Should be one of: 'Single', 'Married', 'Divorced', 'Widowed'
+  permanentAddress         String
+  addressForCorrespondence String
+  pinCode                  String   @db.VarChar(6)
+  emailId                  String   
+  fathersOrHusbandsName    String
+  mobileNo                 String   
+  advtNo                   String // Should be one of: 'Advt. No. 01/2021', 'Advt. No. 02/2021', 'Advt. No. 03/2021'
+  fieldOfSpecialization    String
+  citizenshipType          String // Should be one of: 'By Birth', 'By Domicile'
+  category                 String // Should be one of: 'General', 'EWS', 'OBC', 'SC', 'ST'
+  pwdCategory              String // Should be one of: 'Yes', 'No'
+  presentBasicPay          String?
+  passportPhoto            String
+  timeNeededBeforeJoining  String
+  mothersName              String
+  ageAsOnClosingDate       Int
+  signatureOfApplicant     String
 
-  Application Application @relation(fields: [applicationId], references: [id])
+  createdAt DateTime @default(now())
+
+  applicationId String
+  Application   Application @relation(fields: [applicationId], references: [id])
 }
 
 model ApplicationField2 {

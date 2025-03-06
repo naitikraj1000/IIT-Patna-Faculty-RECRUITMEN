@@ -13,6 +13,14 @@ import Application6 from "../src/component/Application/application6";
 
 const router = createBrowserRouter([
   {
+    path: "/",
+    element: (
+      <ProtectedRoute>
+        <Home />
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: "/application/:id",
     element: (
       <ProtectedRoute>
@@ -27,14 +35,6 @@ const router = createBrowserRouter([
       { path: "form5", element: <Application5 /> },
       { path: "form6", element: <Application6 /> },
     ],
-  },
-  {
-    path: "/",
-    element: (
-      <ProtectedRoute>
-        <Home />
-      </ProtectedRoute>
-    ),
   },
   {
     path: "/signin",
