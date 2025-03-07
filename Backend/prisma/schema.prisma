@@ -47,24 +47,7 @@ model User {
   Referral             Referral[]
   VerificationRequest  VerificationRequest[]
   failedLoginAttempts  FailedLoginAttempt[]
-  applications         Application[]
   JobPosting           JobPosting[]
-}
-
-model Application {
-  id                String              @id @default(cuid())
-  userId            String
-  status            ApplicationStatus   @default(PENDING)
-  completepercent   Float               @default(0)
-  JobPostingId      String
-  user              User                @relation(fields: [userId], references: [id])
-  JobPosting        JobPosting          @relation(fields: [JobPostingId], references: [id])
-  ApplicationField1 ApplicationField1[]
-  ApplicationField2 ApplicationField2[]
-  ApplicationField3 ApplicationField3[]
-  ApplicationField4 ApplicationField4[]
-  ApplicationField5 ApplicationField5[]
-  ApplicationField6 ApplicationField6[]
 }
 
 enum ApplicationStatus {
@@ -79,16 +62,16 @@ model ApplicationField1 {
   completepercent Float  @default(0)
 
   fullName                 String
-  dateOfBirth              DateTime
+  dateOfBirth              String
   proofOfDateOfBirth       String
   gender                   String // Should be one of: 'Male', 'Female', 'Other'
   maritalStatus            String // Should be one of: 'Single', 'Married', 'Divorced', 'Widowed'
   permanentAddress         String
   addressForCorrespondence String
-  pinCode                  String   @db.VarChar(6)
-  emailId                  String   
+  pinCode                  String  @db.VarChar(6)
+  emailId                  String
   fathersOrHusbandsName    String
-  mobileNo                 String   
+  mobileNo                 String
   advtNo                   String // Should be one of: 'Advt. No. 01/2021', 'Advt. No. 02/2021', 'Advt. No. 03/2021'
   fieldOfSpecialization    String
   citizenshipType          String // Should be one of: 'By Birth', 'By Domicile'
@@ -98,58 +81,52 @@ model ApplicationField1 {
   passportPhoto            String
   timeNeededBeforeJoining  String
   mothersName              String
-  ageAsOnClosingDate       Int
+  ageAsOnClosingDate       String
   signatureOfApplicant     String
 
-  createdAt DateTime @default(now())
-
-  applicationId String
-  Application   Application @relation(fields: [applicationId], references: [id])
+  createdAt    DateTime   @default(now())
+  jobpostingid String     @unique
+  JobPosting   JobPosting @relation(fields: [jobpostingid], references: [id])
 }
 
 model ApplicationField2 {
-  id              String @id @default(cuid())
-  description     String @default("Education & Employment")
-  completepercent Float  @default(0)
-  applicationId   String
-
-  Application Application @relation(fields: [applicationId], references: [id])
+  id              String     @id @default(cuid())
+  description     String     @default("Education & Employment")
+  completepercent Float      @default(0)
+  jobpostingid    String
+  JobPosting      JobPosting @relation(fields: [jobpostingid], references: [id])
 }
 
 model ApplicationField3 {
-  id              String @id @default(cuid())
-  description     String @default("Project / Publication")
-  completepercent Float  @default(0)
-  applicationId   String
-
-  Application Application @relation(fields: [applicationId], references: [id])
+  id              String     @id @default(cuid())
+  description     String     @default("Project / Publication")
+  completepercent Float      @default(0)
+  jobpostingid    String
+  JobPosting      JobPosting @relation(fields: [jobpostingid], references: [id])
 }
 
 model ApplicationField4 {
-  id              String @id @default(cuid())
-  description     String @default("Teaching Experience")
-  completepercent Float  @default(0)
-  applicationId   String
-
-  Application Application @relation(fields: [applicationId], references: [id])
+  id              String     @id @default(cuid())
+  description     String     @default("Teaching Experience")
+  completepercent Float      @default(0)
+  jobpostingid    String
+  JobPosting      JobPosting @relation(fields: [jobpostingid], references: [id])
 }
 
 model ApplicationField5 {
-  id              String @id @default(cuid())
-  description     String @default("Awards and Recognitions")
-  completepercent Float  @default(0)
-  applicationId   String
-
-  Application Application @relation(fields: [applicationId], references: [id])
+  id              String     @id @default(cuid())
+  description     String     @default("Awards and Recognitions")
+  completepercent Float      @default(0)
+  jobpostingid    String
+  JobPosting      JobPosting @relation(fields: [jobpostingid], references: [id])
 }
 
 model ApplicationField6 {
-  id              String @id @default(cuid())
-  description     String @default("Additional Info")
-  completepercent Float  @default(0)
-  applicationId   String
-
-  Application Application @relation(fields: [applicationId], references: [id])
+  id              String     @id @default(cuid())
+  description     String     @default("Additional Info")
+  completepercent Float      @default(0)
+  jobpostingid    String
+  JobPosting      JobPosting @relation(fields: [jobpostingid], references: [id])
 }
 
 model PasswordResetRequest {
@@ -200,12 +177,19 @@ model Admin {
 }
 
 model JobPosting {
-  id           String        @id @default(cuid())
-  department   String
-  position     String
-  userId       String
-  user         User          @relation(fields: [userId], references: [id])
-  Applications Application[]
+  id                String              @id @default(cuid())
+  department        String
+  position          String
+  userId            String
+  user              User                @relation(fields: [userId], references: [id])
+  completepercent   Float               @default(0)
+  status            ApplicationStatus   @default(PENDING)
+  ApplicationField1 ApplicationField1[]
+  ApplicationField2 ApplicationField2[]
+  ApplicationField3 ApplicationField3[]
+  ApplicationField4 ApplicationField4[]
+  ApplicationField5 ApplicationField5[]
+  ApplicationField6 ApplicationField6[]
 }
 
 model VerificationRequest {

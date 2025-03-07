@@ -1,0 +1,264 @@
+; (setq a 12)
+; (setq b '(+ 4 a))
+; (print b)
+
+; (setq l1 '(1 2 3))
+; (setq l2 '(4 5 6))
+
+; (print (cdr l1))    ; Prints (2 3)
+; (print (cdr l2))    ; Prints (5 6)
+; (print (append l1 l2))  ; Prints (1 2 3 4 5 6)
+
+
+; (setq s '(1 2 3 4 5)) ; Define a list 's'
+
+; (setq second-element (cadr s)) ; Using 'cadr' to get the second element
+
+; (print second-element) ; Print the second element, which should be '2'
+
+
+; (setq list1 '(2 3 4)) ; Define a list 'list1'
+
+; (setq new-list (cons 1 list1)) ; Add 1 to the front of 'list1'
+
+; (print new-list) ; Print the new list, which should be '(1 2 3 4)'
+
+
+; (setq my-cons '(1 2 3)) ; Define a cons cell '(1 2 3)'
+
+; (rplaca my-cons 'a) ; Replace the car of 'my-cons' with 'a'
+
+; (print my-cons) ; Print the modified cons cell, which should be '(a 2 3)'
+
+
+; (setq my-cons '(1 2 3)) ; Define a cons cell '(1 2 3)'
+
+; (rplacd my-cons '(a b c)) ; Replace the cdr of 'my-cons' with '(a b c)'
+
+; (print my-cons) ; Print the modified cons cell, which should be '(1 a b c)'
+
+
+; (setq bar '(a b c)) ; Define a list 'bar' as (a b c)
+; (setq foo (cdr bar)) ; Define foo as the cdr of bar
+
+
+; (setf (cadr bar) 'u) ; Using setf to set the second element of bar to 'u
+
+; ; foo get's refrenced by cdr bar that's why changes reflect in both
+
+; (print bar) ; Print the modified list 'bar', which should be '(a u c)'
+; (print foo) ; Print foo, which is (u c)
+
+
+; reference talk about setq 
+; (setq list1 '(1 2 3)) ; Define a list 'list1'
+
+; (setq list2 list1) ; Create another reference 'list2' to the same list
+
+; (setf (car list1) 'a) ; Modify the first element of 'list1'
+
+; (print list1) ; '(a 2 3)'
+; (print list2) ; '(a 2 3)' - list2 reflects the change made to list1
+
+
+;*********************************
+
+; (setq my-list '(1 2 3 4 5)) ; Define a list 'my-list'
+; (print my-list)
+; (print (reverse my-list))
+; (print  (length my-list))
+
+; (print (+ 2 3))
+
+;***********************************
+
+; (atom 'a)      ; T, 'a' is an atomic symbol
+; (atom 123)     ; T, 123 is an atomic integer
+; (atom nil)     ; T, NIL is an atomic symbol
+; (atom '(1 2))  ; NIL, '(1 2)' is a cons cell representing a list
+
+
+; ; ATOM examples
+; (print (atom 'ab))      ; T
+; (print (atom 123))     ; T
+; (print (atom nil))     ; T
+; (print (atom '(1 2)))  ; NIL
+
+
+; (listp '(1 2 3))  ; T, '(1 2 3)' is a proper list
+; (listp '(a b . c)) ; T, '(a b . c)' is also considered a list
+; (listp 'a)        ; NIL, 'a' is not a list
+; (listp nil)       ; NIL, NIL is not a list
+
+
+; ; LISTP examples
+; (print (listp '(1 2 3)))    ; T
+; (print (listp '(a b . c)))  ; T
+; (print (listp 'a))          ; NIL
+; (print (listp nil))         ; NIL
+
+
+;*******************************************
+
+; In Lisp, the EQ function is used to check if two objects are the same identical object in memory. 
+; It checks for physical identity, meaning it returns T if two objects occupy the same memory location and NIL otherwise.
+
+; (print (eq 'a 'a))  ; T, both 'a' symbols refer to the same memory location
+; (print (eq 'a 'b))  ; NIL, 'a' and 'b' symbols are different
+; (print (eq 123 123))  ; T, because numbers are self-evaluating and are the same object
+; (print (eq '(1 2) '(1 2)))  ; NIL, because each list expression creates a new list
+; (print (eq '(1 2) (cdr '(1 2))))  ; NIL, even though (cdr '(1 2)) is (2), it's a new list
+
+;********************************************
+
+; (defun function-name (parameter1 parameter2 ...)
+;   "Optional documentation string"
+;   body)
+
+
+; (defun add-two (x y)
+;   "Add two numbers together"
+;   (+ x y))
+
+; (print (add-two 5 7))  ; Call the function and print the result
+
+;***********************************************
+
+; (defun classify-number (num)
+;   "Classify a number into different categories"
+;   (cond
+;     ((= num 0) (print "Number is zero."))
+;     ((< num 0) (print "Number is negative."))
+;     ((> num 0) (print "Number is positive."))
+;     (t (print "Number is not a real number."))))
+
+; (classify-number 5)
+; (classify-number -3)
+; (classify-number 0)
+; ; (classify-number "not a number")
+
+
+; (defun is-positive-and-even (num)
+;   "Check if a number is positive and even"
+;   (if (and (> num 0) (evenp num))
+;       (print "Number is positive and even.")
+;       (print "Number is not positive and even.")))
+
+; (is-positive-and-even 4)
+; (is-positive-and-even -2)
+; (is-positive-and-even 5)
+
+
+;***************************************
+; (defun factorial (n)
+;   "Calculate the factorial of a number"
+;   (if (zerop n) ; Base case: factorial of 0 is 1
+;       1
+;       (* n (factorial (- n 1))))) ; Recursive case: n! = n * (n-1)!
+
+; ; Call the function
+; (print (factorial 5)) ; Calculate factorial of 5
+
+;Global variable
+; (defvar x '(234))
+; (print x)
+
+; ;Local variable
+; (defun let-example ()
+;   "Using LET to define local variables"
+;   (let ((a 1)         ; Local variable a
+;         (b 2))        ; Local variable b
+;     (format t "LET: a = ~a, b = ~a~%" a b)))
+
+; (defun let*-example ()
+;   "Using LET* to define local variables"
+;   (let* ((x 10)       ; Local variable x
+;         (y (* x 2))) ; Local variable y
+;     (format t "LET*: x = ~a, y = ~a~%" x y)))
+
+; (let-example)   ; Call the LET example
+; (let*-example)  ; Call the LET* example
+
+; (let ((x 5)
+;       (y (* 2 x))) ; y can't refer to x here
+;   (format t "x: ~a, y: ~a~%" x y))
+
+
+; (let ((x 5)
+;       (y (* 2 x))) ; y can't refer to x here
+;   (format t "x: ~a, y: ~a~%" x y))
+
+;e difference is that with LET*, variables are evaluated sequentially, meaning variables defined earlier can be used in the initialization expressions of variables defined later.
+
+;Array
+; (setq cube (make-array '(2 2 2) :initial-element "0")) ; Creates a 2x2x2 cube with initial value "empty"
+
+; (print cube)
+
+;sructure
+
+; (defstruct person
+;   name
+;   age
+;   occupation)
+
+; (setq john (make-person :name "John" :age 30 :occupation "Engineer"))
+
+; (format t "Name: ~a~%" (person-name john))
+; (format t "Age: ~a~%" (person-age john))
+; (format t "Occupation: ~a~%" (person-occupation john))
+
+; (setf (person-occupation john) "Data Scientist")
+
+; (format t "Updated Occupation: ~a~%" (person-occupation john))
+
+
+;see about loop
+
+
+; (defun my-count (n lst)
+;   "Count occurrences of 'n' in the list 'lst'."
+;   (cond
+;     ((null lst) 0)                         ; Base case: If list is empty, count is 0
+;     ((= n (car lst))                       ; If 'n' matches the first element of 'lst'
+;       (1+ (my-count n (cdr lst))))         ; Increment count by 1 and recurse on the rest
+;     (t (my-count n (cdr lst)))))           ; If not a match, recurse on the rest of the list
+
+; ;; Example Usage:
+; (format t "Count of 1 in (1 2 1): ~a~%" (my-count 1 '(1 2 1)))  ; Should print 2
+; (format t "Count of 2 in (1 2 1): ~a~%" (my-count 2 '(1 2 1)))  ; Should print 1
+; (format t "Count of 3 in (1 2 1): ~a~%" (my-count 3 '(1 2 1)))  ; Should print 0
+
+
+; (defun my-reverse (L)
+;   "Reverse the list L."
+;   (cond
+;     ((null L) L)                               ; Base case: If L is empty, return L
+;     (t (append (my-reverse (cdr L)) (list (car L))))))
+
+; ;; Example Usage:
+; (format t "Reversed list: ~a~%" (my-reverse '(1 2 3 4 5)))  ; Should print (5 4 3 2 1)
+; (format t "Reversed list: ~a~%" (my-reverse '()))           ; Should print NIL (empty list)
+
+; 
+
+
+
+; (defun my-equal (X1 X2)
+;   (cond
+;     ((atom X1)
+;     (if (atom X2)
+;         (eq X1 X2)
+;         nil))  ; Return nil if X2 is not an atom
+;     (t
+;     (if (my-equal (car X1) (car X2))
+;         (my-equal (cdr X1) (cdr X2))
+;         nil))  ; Return nil if the heads are not equal
+;     )
+;   )
+
+; ;; Call the my-equal function with two lists
+; (print (my-equal '(1 2 3 4) '(1 2 3 4)))
+
+
+
