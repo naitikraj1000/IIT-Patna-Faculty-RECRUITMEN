@@ -143,7 +143,7 @@ async function signin(req, res) {
         };
 
         const token = jsonwebtoken.sign(payload, process.env.JWT_SECRET, {
-            expiresIn: 3600
+            expiresIn: 36000
         });
 
         res.cookie('token', token, {

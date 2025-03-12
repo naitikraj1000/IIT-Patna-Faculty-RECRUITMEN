@@ -3,7 +3,6 @@ import prismadb from '../Database/db.js';
 async function jobposting(req, res) {
 
     const user_id = req.user_id;
-
     const { department, position } = req.body;
 
     console.log(user_id, department, position);
@@ -12,26 +11,119 @@ async function jobposting(req, res) {
         return res.status(400).json({ message: "Please enter all fields" });
     }
 
-
-
-
     try {
-        let jobposting = await prismadb.jobPosting.create({
-            data: {
-                department,
-                position,
-                userId: user_id
-            }
+        await prismadb.$transaction(async (tx) => {
+            // Step 1: Create Job Posting
+            const jobposting = await tx.jobPosting.create({
+                data: {
+                    department,
+                    position,
+                    userId: user_id
+                }
+            });
+
+            let jobpostingid = jobposting.id;
+
+            let education_details = [
+                {
+                    id: "0",
+                    "SCHOOL/COLLEGE/INSTITUTE": "",
+                    "DATE OF ENTRY": "",
+                    "DATE OF LEAVING": "",
+                    "BOARD/UNIVERSITY/INSTITUTION": "",
+                    "EXAM/DEGREE/DIPLOMA PASSED": "10th",
+                    "DISTINCTION/CLASS/DIVISION": "",
+                    "SUBJECTS": "",
+                    "PERCENTAGE OF MARKS/CPI": "",
+                    "YEAR OF PASSING": "",
+                    "default": true
+                },
+                {
+                    id: "1",
+                    "SCHOOL/COLLEGE/INSTITUTE": "",
+                    "DATE OF ENTRY": "",
+                    "DATE OF LEAVING": "",
+                    "BOARD/UNIVERSITY/INSTITUTION": "",
+                    "EXAM/DEGREE/DIPLOMA PASSED": "12th",
+                    "DISTINCTION/CLASS/DIVISION": "",
+                    "SUBJECTS": "",
+                    "PERCENTAGE OF MARKS/CPI": "",
+                    "YEAR OF PASSING": "",
+                    "default": true
+                },
+                {
+                    id: "2",
+                    "SCHOOL/COLLEGE/INSTITUTE": "",
+                    "DATE OF ENTRY": "",
+                    "DATE OF LEAVING": "",
+                    "BOARD/UNIVERSITY/INSTITUTION": "",
+                    "EXAM/DEGREE/DIPLOMA PASSED": "Bachelors",
+                    "DISTINCTION/CLASS/DIVISION": "",
+                    "SUBJECTS": "",
+                    "PERCENTAGE OF MARKS/CPI": "",
+                    "YEAR OF PASSING": "",
+                    "default": true
+                },
+                {
+                    id: "3",
+                    "SCHOOL/COLLEGE/INSTITUTE": "",
+                    "DATE OF ENTRY": "",
+                    "DATE OF LEAVING": "",
+                    "BOARD/UNIVERSITY/INSTITUTION": "",
+                    "EXAM/DEGREE/DIPLOMA PASSED": "Masters",
+                    "DISTINCTION/CLASS/DIVISION": "",
+                    "SUBJECTS": "",
+                    "PERCENTAGE OF MARKS/CPI": "",
+                    "YEAR OF PASSING": "",
+                    "default": true
+                },
+                {
+                    id: "4",
+                    "SCHOOL/COLLEGE/INSTITUTE": "",
+                    "DATE OF ENTRY": "",
+                    "DATE OF LEAVING": "",
+                    "BOARD/UNIVERSITY/INSTITUTION": "",
+                    "EXAM/DEGREE/DIPLOMA PASSED": "PhD",
+                    "DISTINCTION/CLASS/DIVISION": "",
+                    "SUBJECTS": "",
+                    "PERCENTAGE OF MARKS/CPI": "",
+                    "YEAR OF PASSING": "",
+                    "default": true
+                }
+            ];
+
+            let employment_details = [
+                {
+                    id: "0",
+                    "LAST PAY & SCALE OF PAY": "",
+                    "POSITION HELD": "",
+                    "DATE OF JOINING": "",
+                    "DATE OF LEAVING": "",
+                    "NATURE OF DUTIES/WORK": "",
+                    "ORGANISATION/INSTITUTION": "",
+                    "ADDITIONAL REMARKS (ABOUT THE EXPERIENCE, IF ANY)": "",
+                    "default": true
+                }
+            ];
+
+            // Step 2: Create Application Field (Linked to Job Posting)
+            await tx.applicationField2.create({
+                data: {
+                    jobpostingid,
+                    education_details: education_details,
+                    employment_details: employment_details
+                }
+            });
+
+            // If both succeed, the transaction commits automatically.
         });
 
-        return res.status(200).json({ message: "Job posted successfully", jobposting });
+        return res.status(200).json({ message: "Job posted successfully" });
 
     } catch (error) {
-        console.log(error)
-        return res.status(500).json({ message: error });
+        console.error("Transaction Failed:", error);
+        return res.status(500).json({ message: "Failed to post job", error });
     }
-
-
 
 }
 
@@ -98,6 +190,27 @@ async function saveapplicationform(req, res) {
     }
 }
 
+async function saveapplicationform2(req, res) {
+    console.log(" Save Application Form 2");
+    console.log(req.body);
+    try {
+        let savedApplication = await prismadb.applicationField2.update({
+            where: { jobpostingid: req.body.jobpostingid },
+            data: {
+                education_details: req.body.education_details,
+                employment_details: req.body.employment_details
+            }
+        })
+
+        console.log("Application form saved successfully");
+        return res.status(200).json({ message: "Application form saved successfully", data: savedApplication });
+
+    } catch (error) {
+        console.error("Application form error", error);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 
 async function retrieveapplicationform(req, res) {
 
@@ -121,5 +234,26 @@ async function retrieveapplicationform(req, res) {
 }
 
 
+async function retrieveapplicationform2(req, res) {
+   console.log("Retrieve Application Form 2");
+    try {
+        const { jobpostingid } = req.body;
+
+        if (!jobpostingid) {
+            return res.status(400).json({ message: "jobpostingid is required" });
+        }
+
+        const applicationform = await prismadb.applicationField2.findUnique({
+            where: { jobpostingid }
+        });
+
+        console.log("Application form retrieved successfully");
+        return res.status(200).json({ message: "Application form retrieved successfully", data: applicationform });
+    } catch (error) {
+        console.error("Application form error", error);
+        return res.status(500).json({ message: error });
+    }
+}
+
 export default jobposting;
-export { getjobposting, deletejobposting, saveapplicationform,retrieveapplicationform };
+export { getjobposting, deletejobposting, saveapplicationform, saveapplicationform2, retrieveapplicationform,retrieveapplicationform2 };

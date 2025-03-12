@@ -2,7 +2,7 @@ import { Router } from "express";
 import { forgetpassword, resetpassword,verifytoken, emailverification, signin, signout, signup } from "../Component/authentication.js";
 import authenticate from "../Component/authentication.js";
 import jobposting from "../Component/jobposting.js";
-import {getjobposting,deletejobposting,saveapplicationform,retrieveapplicationform} from "../Component/jobposting.js";
+import {getjobposting,deletejobposting,saveapplicationform,saveapplicationform2,retrieveapplicationform,retrieveapplicationform2} from "../Component/jobposting.js";
 import multer_upload from "../multer/multer.js";
 import { handleuploaddocument } from "../multer/multer.js";
 const router = Router();
@@ -14,7 +14,9 @@ router.get('/', (req, res) => {
 
 router.post("/uploaddocument",authenticate,multer_upload.single("file"),handleuploaddocument);
 router.post("/retrieveapplicationform",authenticate,retrieveapplicationform);
+router.post("/retrieveapplicationform2",authenticate,retrieveapplicationform2);
 router.post("/saveapplicationform",authenticate,saveapplicationform)
+router.post("/saveapplicationform2",authenticate,saveapplicationform2)
 router.post("/signin", signin);
 router.post("/signup", signup);
 router.get("/signout", signout);

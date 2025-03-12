@@ -22,7 +22,6 @@ function Application() {
       >
         {menuExpanded ? "✕" : "☰"}
       </button>
-
       <div
         className={`${styles.sidebar} ${
           menuExpanded ? styles.expanded : styles.collapsed

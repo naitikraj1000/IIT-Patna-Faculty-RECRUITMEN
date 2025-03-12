@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import styles from "./application2.module.css";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import {
-  Education_Details,
-  Education_levels,
-  Employment_Details,
-} from "../../option/education&employment";
+import { useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { saveprogress } from "../../../redux/infromationslice";
 
 function Application2() {
+  const saveProgress = useSelector((state) => state.information.saveProgress);
+  const [progresspercentage, setProgressPercentage] = useState(64);
+  const dispatch = useDispatch();
+  const location = useLocation();
+
   // Education entry format
   const education_entry_format = {
     "SCHOOL/COLLEGE/INSTITUTE": "",
@@ -31,6 +34,8 @@ function Application2() {
     "ORGANISATION/INSTITUTION": "",
     "ADDITIONAL REMARKS (ABOUT THE EXPERIENCE, IF ANY)": "",
   };
+
+  const Education_levels = ["10th", "12th", "Bachelors", "Masters", "PhD"];
 
   // State for education and employment entries
   const [educationentry, setEducationentry] = useState([]);
@@ -56,6 +61,79 @@ function Application2() {
   useEffect(() => {
     addDefaultEducationEntry();
   }, []);
+
+  async function handleSaveProgress() {
+    console.log(" Save Progress in Application2");
+    console.log("educationentry", educationentry);
+    console.log("employmententry", employmententry);
+    const backendurl = import.meta.env.VITE_BACKEND_URL;
+    const parts = location.pathname.split("/");
+    const jobpostingid = parts[parts.length - 2];
+
+    const updatedFormData = {
+      jobpostingid: jobpostingid,
+      progress_percentage: progresspercentage,
+      education_details: educationentry,
+      employment_details: employmententry,
+    };
+
+    try {
+      await fetch(`${backendurl}/saveapplicationform2`, {
+        method: "POST",
+        body: JSON.stringify(updatedFormData),
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error) {
+      console.error("Error saving progress:", error);
+    }
+  }
+
+
+  async function retriveProgress() {
+
+    console.log("Retrieve Progress in Application2");
+    const parts = location.pathname.split("/");
+    const jobpostingid = parts[parts.length - 2];
+    const backendurl = import.meta.env.VITE_BACKEND_URL;
+
+    try {
+      let res = await fetch(`${backendurl}/retrieveapplicationform2`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jobpostingid: jobpostingid }),
+        credentials: "include",
+      });
+
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+
+      let data = await res.json();
+      let retrievedFormData = data.data;
+        setEducationentry(retrievedFormData.education_details);
+        setEmploymententry(retrievedFormData.employment_details);
+        console.log("Education Details", retrievedFormData.education_details);
+        console.log("Employment Details", retrievedFormData.employment_details);
+
+    } catch (error) {
+      console.error("Error retrieving application form:", error.message);
+    }
+  }
+
+  // Retrieve progress on component mount
+    useEffect(() => {
+      retriveProgress();
+    }, []);
+
+
+  // Save Progress
+  useEffect(() => {
+    if (saveProgress) {
+      handleSaveProgress();
+      dispatch(saveprogress());
+    }
+  }, [saveProgress]);
 
   // Add default education entries
   function addDefaultEducationEntry() {
@@ -147,7 +225,7 @@ function Application2() {
         >
           <thead>
             <tr>
-              <th style={{ width: "100px" }}>EDIT/DELETE</th>{" "}
+              <th style={{ width: "100px" }}>EDIT/DELETE</th>
               {Object.keys(education_entry_format).map((key, index) => (
                 <th key={index} style={{ width: "150px" }}>
                   {key}
@@ -167,7 +245,7 @@ function Application2() {
                       color: "#3498db",
                     }}
                   />
-                  {!entry.default && ( // Only show Delete icon for non-default entries
+                  {!entry.default && (
                     <FaTrash
                       onClick={() => deleteEducationEntry(index)}
                       style={{ cursor: "pointer", color: "#e74c3c" }}
@@ -193,7 +271,9 @@ function Application2() {
 
       {/* Employment Details Section */}
       <div className={styles.employmentcontainer}>
-        <h2>Employment Details <span className={styles.required}>*</span> </h2>
+        <h2>
+          Employment Details <span className={styles.required}>*</span>
+        </h2>
         <table
           border="1"
           cellSpacing="0"
@@ -202,8 +282,7 @@ function Application2() {
         >
           <thead>
             <tr>
-              <th style={{ width: "100px" }}>Actions</th>{" "}
-              {/* Combined Edit/Delete Column */}
+              <th style={{ width: "100px" }}>Actions</th>
               {Object.keys(employment_entry_format).map((key, index) => (
                 <th key={index} style={{ width: "150px" }}>
                   {key}
