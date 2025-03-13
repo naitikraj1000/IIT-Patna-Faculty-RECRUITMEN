@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { saveprogress } from "../../../redux/infromationslice";
 
 function Application1() {
-  const [progresspercentage, setProgressPercentage] = useState(13);
+  const [progresspercentage, setProgressPercentage] = useState(33);
   const [uploading, setUploading] = useState(false);
   const location = useLocation();
   const dispatch = useDispatch();
@@ -89,6 +89,7 @@ function Application1() {
         }
       }
     }
+    
 
     setFormData(updatedFormData);
     const parts = location.pathname.split("/");
@@ -219,6 +220,7 @@ function Application1() {
               name="proofOfDateOfBirth"
               type="file"
               id="proofOfDateOfBirth"
+              
               onChange={handleChange}
             />
           </div>

@@ -148,16 +148,28 @@ async function getjobposting(req, res) {
 async function deletejobposting(req, res) {
     const user_id = req.user_id;
     const { job_id } = req.body;
+    
     try {
-        let jobposting = await prismadb.jobPosting.deleteMany({
+        // Delete all related application fields (if they exist)
+        await prismadb.ApplicationField1.deleteMany({ where: { jobpostingid: job_id } });
+        await prismadb.ApplicationField2.deleteMany({ where: { jobpostingid: job_id } });
+        await prismadb.ApplicationField3.deleteMany({ where: { jobpostingid: job_id } });
+        await prismadb.ApplicationField4.deleteMany({ where: { jobpostingid: job_id } });
+        await prismadb.ApplicationField5.deleteMany({ where: { jobpostingid: job_id } });
+        await prismadb.ApplicationField6.deleteMany({ where: { jobpostingid: job_id } });
+
+        // Finally, delete the job posting itself
+        await prismadb.JobPosting.deleteMany({
             where: {
                 userId: user_id,
                 id: job_id
             }
         });
+
         return res.status(200).json({ message: "Job deleted successfully" });
     } catch (error) {
-        return res.status(500).json({ message: error });
+        console.error("Error deleting job posting:", error);
+        return res.status(500).json({ message: error.message || "An error occurred while deleting the job" });
     }
 }
 
@@ -235,7 +247,7 @@ async function retrieveapplicationform(req, res) {
 
 
 async function retrieveapplicationform2(req, res) {
-   console.log("Retrieve Application Form 2");
+    console.log("Retrieve Application Form 2");
     try {
         const { jobpostingid } = req.body;
 
@@ -255,5 +267,192 @@ async function retrieveapplicationform2(req, res) {
     }
 }
 
+
+async function saveapplicationform4(req, res) {
+    try {
+        const { jobpostingid } = req.body;
+
+        if (!jobpostingid) {
+            return res.status(400).json({ message: "jobpostingid is required" });
+        }
+
+        const savedApplication = await prismadb.applicationField4.upsert({
+            where: { jobpostingid }, // ✅ Ensure the correct field is used
+            update: req.body, // ✅ Update the record if found
+            create: req.body // ✅ Create a new record if not found
+        });
+
+        console.log("Application form saved successfully", savedApplication);
+        return res.status(200).json({ message: "Application form saved successfully", data: savedApplication });
+
+    } catch (error) {
+        console.error("Application form error", error);
+        return res.status(500).json({ message: error.message });
+    }
+
+}
+
+
+async function retrieveapplicationform4(req, res) {
+    try {
+        const { jobpostingid } = req.body;
+
+        if (!jobpostingid) {
+            return res.status(400).json({ message: "jobpostingid is required" });
+        }
+
+        const applicationform = await prismadb.applicationField4.findUnique({
+            where: { jobpostingid }
+        });
+
+        console.log("Application form retrieved successfully");
+        return res.status(200).json({ message: "Application form retrieved successfully", data: applicationform });
+    } catch (error) {
+        console.error("Application form error", error);
+        return res.status(500).json({ message: error });
+    }
+}
+
+
+async function saveapplicationform5(req, res) {
+    try {
+        const { jobpostingid } = req.body;
+
+        if (!jobpostingid) {
+            return res.status(400).json({ message: "jobpostingid is required" });
+        }
+
+        const savedApplication = await prismadb.applicationField5.upsert({
+            where: { jobpostingid }, // ✅ Ensure the correct field is used
+            update: req.body, // ✅ Update the record if found
+            create: req.body // ✅ Create a new record if not found
+        });
+
+        console.log("Application form saved successfully", savedApplication);
+        return res.status(200).json({ message: "Application form saved successfully", data: savedApplication });
+
+    } catch (error) {
+        console.error("Application form error", error);
+        return res.status(500).json({ message: error.message });
+    }
+
+}
+
+
+async function retrieveapplicationform5(req, res) {
+    try {
+        const { jobpostingid } = req.body;
+
+        if (!jobpostingid) {
+            return res.status(400).json({ message: "jobpostingid is required" });
+        }
+
+        const applicationform = await prismadb.applicationField5.findUnique({
+            where: { jobpostingid }
+        });
+
+        console.log("Application form retrieved successfully");
+        return res.status(200).json({ message: "Application form retrieved successfully", data: applicationform });
+    } catch (error) {
+        console.error("Application form error", error);
+        return res.status(500).json({ message: error });
+    }
+}
+
+
+
+async function saveapplicationform3(req, res) {
+    try {
+        const { jobpostingid } = req.body;
+
+        if (!jobpostingid) {
+            return res.status(400).json({ message: "jobpostingid is required" });
+        }
+
+        const savedApplication = await prismadb.applicationField3.upsert({
+            where: { jobpostingid }, // ✅ Ensure the correct field is used
+            update: req.body, // ✅ Update the record if found
+            create: req.body // ✅ Create a new record if not found
+        });
+
+        console.log("Application form saved successfully", savedApplication);
+        return res.status(200).json({ message: "Application form saved successfully", data: savedApplication });
+
+    } catch (error) {
+        console.error("Application form error", error);
+        return res.status(500).json({ message: error.message });
+    }
+
+}
+
+
+async function retrieveapplicationform3(req, res) {
+    try {
+        const { jobpostingid } = req.body;
+
+        if (!jobpostingid) {
+            return res.status(400).json({ message: "jobpostingid is required" });
+        }
+
+        const applicationform = await prismadb.applicationField3.findUnique({
+            where: { jobpostingid }
+        });
+
+        console.log("Application form retrieved successfully");
+        return res.status(200).json({ message: "Application form retrieved successfully", data: applicationform });
+    } catch (error) {
+        console.error("Application form error", error);
+        return res.status(500).json({ message: error });
+    }
+}
+
+async function saveapplicationform6(req,res) {
+    try {
+        const { jobpostingid } = req.body;
+
+        if (!jobpostingid) {
+            return res.status(400).json({ message: "jobpostingid is required" });
+        }
+
+        const savedApplication = await prismadb.applicationField6.upsert({
+            where: { jobpostingid }, // ✅ Ensure the correct field is used
+            update: req.body, // ✅ Update the record if found
+            create: req.body // ✅ Create a new record if not found
+        });
+
+        console.log("Application form saved successfully", savedApplication);
+        return res.status(200).json({ message: "Application form saved successfully", data: savedApplication });
+
+    } catch (error) {
+        console.error("Application form error", error);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+async function retrieveapplicationform6(req,res) {
+    try {
+        const { jobpostingid } = req.body;
+
+        if (!jobpostingid) {
+            return res.status(400).json({ message: "jobpostingid is required" });
+        }
+
+        const applicationform = await prismadb.applicationField6.findUnique({
+            where: { jobpostingid }
+        });
+
+        console.log("Application form retrieved successfully");
+        return res.status(200).json({ message: "Application form retrieved successfully", data: applicationform });
+    } catch (error) {
+        console.error("Application form error", error);
+        return res.status(500).json({ message: error });
+    }
+
+}
+
+
 export default jobposting;
-export { getjobposting, deletejobposting, saveapplicationform, saveapplicationform2, retrieveapplicationform,retrieveapplicationform2 };
+export {saveapplicationform6, retrieveapplicationform6};
+export {saveapplicationform3, retrieveapplicationform3};
+export {saveapplicationform5, retrieveapplicationform5};
+export { getjobposting, deletejobposting, saveapplicationform, saveapplicationform2, saveapplicationform4, retrieveapplicationform4, retrieveapplicationform, retrieveapplicationform2 };

@@ -72,7 +72,7 @@ function Application2() {
 
     const updatedFormData = {
       jobpostingid: jobpostingid,
-      progress_percentage: progresspercentage,
+      completepercent: progresspercentage,
       education_details: educationentry,
       employment_details: employmententry,
     };

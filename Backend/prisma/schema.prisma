@@ -90,13 +90,13 @@ model ApplicationField1 {
 }
 
 model ApplicationField2 {
-  id                      String  @id @default(cuid())
-  description             String  @default("Education & Employment")
-  completepercent         Float   @default(0)
+  id              String @id @default(cuid())
+  description     String @default("Education & Employment")
+  completepercent Float  @default(0)
 
   // Store Education & Employment details as JSON
-  education_details       Json  
-  employment_details      Json 
+  education_details  Json
+  employment_details Json
 
   // Relation with JobPosting
   createdAt    DateTime   @default(now())
@@ -104,39 +104,87 @@ model ApplicationField2 {
   JobPosting   JobPosting @relation(fields: [jobpostingid], references: [id])
 }
 
-
-
-
 model ApplicationField3 {
-  id              String     @id @default(cuid())
-  description     String     @default("Project / Publication")
-  completepercent Float      @default(0)
-  jobpostingid    String
-  JobPosting      JobPosting @relation(fields: [jobpostingid], references: [id])
+  id                                String     @id @default(cuid())
+  description                       String     @default("Project / Publication")
+  completepercent                   Float      @default(0)
+  pgProjects                        String
+  phdCompleted                      String
+  phdOngoing                        String
+  sponsoredProjects                 String
+  consultancyProjects               String
+  patents                           String
+  journalNational                   String
+  journalInternational              String
+  conferenceRefereedNational        String
+  conferenceUnrefereedNational      String
+  technicalReports                  String
+  citations                         String
+  conferenceRefereedInternational   String
+  conferenceUnrefereedInternational String
+  booksPublished                    String
+  bookChaptersPublished             String
+  researchExperience                String
+  patentsList                       String
+  journalPublications               String
+  conferencePublications            String
+  researchPublications              Json
+  jobpostingid                      String     @unique
+  JobPosting                        JobPosting @relation(fields: [jobpostingid], references: [id])
 }
 
 model ApplicationField4 {
-  id              String     @id @default(cuid())
-  description     String     @default("Teaching Experience")
-  completepercent Float      @default(0)
-  jobpostingid    String
-  JobPosting      JobPosting @relation(fields: [jobpostingid], references: [id])
+  id              String @id @default(cuid())
+  description     String @default("Academic Background")
+  completepercent Float  @default(0)
+
+  teachingExperience    String
+  coursesTaught         String
+  specialization        String
+  specializationDetails String
+  phdThesisTitle        String
+  phdSupervisor         String
+  phdWorkDocument       String
+  labExperienceDocument String
+  coSupervisor          String?
+  thesisSubmissionDate  String
+  vivaVoceDate          String
+
+  createdAt    DateTime   @default(now())
+  jobpostingid String     @unique
+  JobPosting   JobPosting @relation(fields: [jobpostingid], references: [id])
 }
 
 model ApplicationField5 {
-  id              String     @id @default(cuid())
-  description     String     @default("Awards and Recognitions")
-  completepercent Float      @default(0)
-  jobpostingid    String
-  JobPosting      JobPosting @relation(fields: [jobpostingid], references: [id])
+  id                        String     @id @default(cuid())
+  description               String     @default("Awards and Recognitions")
+  completepercent           Float      @default(0)
+  awardsHonours             String
+  fellowProfessionalBody    String
+  memberProfessionalBody    String
+  editorialBoardMemberships String
+  seminarsOrganized         String
+  jobpostingid              String     @unique
+  JobPosting                JobPosting @relation(fields: [jobpostingid], references: [id])
 }
 
 model ApplicationField6 {
-  id              String     @id @default(cuid())
-  description     String     @default("Additional Info")
-  completepercent Float      @default(0)
-  jobpostingid    String
-  JobPosting      JobPosting @relation(fields: [jobpostingid], references: [id])
+  id                  String @id @default(cuid())
+  description         String @default("Additional Info")
+  completepercent     Float  @default(0)
+  researchPlan        Json
+  previousApplication String
+  additionalRemarks   String
+  referrer1           Json
+  referrer2           Json
+  referrer3           Json
+  legalProceeding     String
+  courtCase           String
+  declaration         String
+
+  jobpostingid String     @unique
+  createdAt    DateTime   @default(now())
+  JobPosting   JobPosting @relation(fields: [jobpostingid], references: [id])
 }
 
 model PasswordResetRequest {

@@ -77,7 +77,7 @@ function Application() {
             <div className={styles.progressBar}>
               <div
                 className={styles.progressFill}
-                style={{ width: "0%" }}
+                style={{ width: "90%" }}
               ></div>
             </div>
           </button>
@@ -92,7 +92,7 @@ function Application() {
             <div className={styles.progressBar}>
               <div
                 className={styles.progressFill}
-                style={{ width: "0%" }}
+                style={{ width: "79%" }}
               ></div>
             </div>
           </button>
@@ -107,7 +107,7 @@ function Application() {
             <div className={styles.progressBar}>
               <div
                 className={styles.progressFill}
-                style={{ width: "0%" }}
+                style={{ width: "60%" }}
               ></div>
             </div>
           </button>
@@ -122,7 +122,7 @@ function Application() {
             <div className={styles.progressBar}>
               <div
                 className={styles.progressFill}
-                style={{ width: "0%" }}
+                style={{ width: "30%" }}
               ></div>
             </div>
           </button>

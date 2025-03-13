@@ -1,8 +1,8 @@
 /* application1.module.css */
 
-/* input[type="file"] {
+input[type="file"] {
   display: none;
-} */
+}
 .biodataContainer {
   background: #263347;
   color: #e2e8f0;
