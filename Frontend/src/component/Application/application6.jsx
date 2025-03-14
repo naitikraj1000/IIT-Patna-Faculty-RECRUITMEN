@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { saveprogress } from "../../../redux/infromationslice";
+import InputFile from "./uploadfile";
 import styles from "./application6.module.css";
 
 function Application6() {
@@ -91,7 +92,7 @@ function Application6() {
 
     const backendurl = import.meta.env.VITE_BACKEND_URL;
     try {
-      let res = await fetch(`${backendurl}/saveapplicationform6`, {
+      let res = await fetch(`${backendurl}/saveapplicationform/6`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedFormData),
@@ -113,7 +114,7 @@ function Application6() {
     const backendurl = import.meta.env.VITE_BACKEND_URL;
 
     try {
-      let res = await fetch(`${backendurl}/retrieveapplicationform6`, {
+      let res = await fetch(`${backendurl}/retrieveapplicationform/6`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jobpostingid: jobpostingid }),
@@ -159,7 +160,9 @@ function Application6() {
               Research Plan/ Teaching Plan/Vision and Mission for IIT Patna:{" "}
               <span className={styles.required}>*</span>
             </label>
-            <label className={styles.formFile} htmlFor="researchPlan">
+
+            <InputFile formFile={styles.formFile} name="researchPlan" handleChange={handleChange} data={formData.researchPlan} />
+            {/* <label className={styles.formFile} htmlFor="researchPlan">
               Upload
               {typeof formData.researchPlan === "string" &&
               formData.researchPlan.trim() ? (
@@ -173,7 +176,7 @@ function Application6() {
               type="file"
               id="researchPlan"
               onChange={handleChange}
-            />
+            /> */}
           </div>
 
           {/* Previous Application */}

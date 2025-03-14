@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { saveprogress } from "../../../redux/infromationslice";
+import InputFile from "./uploadfile";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 function Application3() {
@@ -132,7 +133,7 @@ function Application3() {
 
     const backendurl = import.meta.env.VITE_BACKEND_URL;
     try {
-      let res = await fetch(`${backendurl}/saveapplicationform3`, {
+      let res = await fetch(`${backendurl}/saveapplicationform/3`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToSave),
@@ -156,7 +157,7 @@ function Application3() {
     const backendurl = import.meta.env.VITE_BACKEND_URL;
 
     try {
-      let res = await fetch(`${backendurl}/retrieveapplicationform3`, {
+      let res = await fetch(`${backendurl}/retrieveapplicationform/3`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jobpostingid: jobpostingid }),
@@ -408,7 +409,9 @@ function Application3() {
             Upload Research & Development / Industrial/Training experience:{" "}
             <span className={styles.required}>*</span>
           </label>
-          <label
+
+          <InputFile  formFile={styles.fileUploadLabel} name="researchExperience" handleChange={handleChange} data={formData.researchExperience} />
+          {/* <label
             className={styles.fileUploadLabel}
             htmlFor="researchExperience"
           >
@@ -425,7 +428,7 @@ function Application3() {
               id="researchExperience"
               onChange={handleChange}
             />
-          </label>
+          </label> */}
         </div>
 
         <div className={styles.fileUploadGroup}>
@@ -433,7 +436,10 @@ function Application3() {
             Upload Complete list of Patents (ANNEXURE A):{" "}
             <span className={styles.required}>*</span>
           </label>
-          <label className={styles.fileUploadLabel} htmlFor="patentsList">
+
+          <InputFile  formFile={styles.fileUploadLabel} name="patentsList" handleChange={handleChange} data={formData.patentsList} />
+
+          {/* <label className={styles.fileUploadLabel} htmlFor="patentsList">
             Upload
             {typeof formData.patentsList === "string" &&
             formData.patentsList.trim() ? (
@@ -447,15 +453,17 @@ function Application3() {
               id="patentsList"
               onChange={handleChange}
             />
-          </label>
+          </label> */}
         </div>
 
         <div className={styles.fileUploadGroup}>
           <label>
             Upload Complete list of Journal Publications (APA citation style):{" "}
             <span className={styles.required}>*</span>
-          </label>
-          <label
+          </label>   
+          
+          <InputFile formFile={styles.fileUploadLabel} name="journalPublications" handleChange={handleChange} data={formData.journalPublications} />
+          {/* <label
             className={styles.fileUploadLabel}
             htmlFor="journalPublications"
           >
@@ -472,7 +480,8 @@ function Application3() {
               id="journalPublications"
               onChange={handleChange}
             />
-          </label>
+          </label> */}
+
         </div>
 
         <div className={styles.fileUploadGroup}>
@@ -480,7 +489,11 @@ function Application3() {
             Upload Complete list of Conference Publications/Presentations:{" "}
             <span className={styles.required}>*</span>
           </label>
-          <label className="styles.fileUploadLabel" htmlFor="conferencePublications">
+          
+          <InputFile formFile={styles.fileUploadLabel} name="conferencePublications" handleChange={handleChange} data={formData.conferencePublications} />
+
+
+          {/* <label className="styles.fileUploadLabel" htmlFor="conferencePublications">
             Upload
             {typeof formData.conferencePublications === "string" &&
             formData.conferencePublications.trim() ? (
@@ -494,7 +507,7 @@ function Application3() {
               id="conferencePublications"
               onChange={handleChange}
             />
-        </label>
+        </label> */}
         </div>
 
         <div className={styles.formGroup}>

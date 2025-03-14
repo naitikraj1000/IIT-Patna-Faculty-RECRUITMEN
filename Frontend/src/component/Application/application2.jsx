@@ -78,7 +78,7 @@ function Application2() {
     };
 
     try {
-      await fetch(`${backendurl}/saveapplicationform2`, {
+      await fetch(`${backendurl}/saveapplicationform/2`, {
         method: "POST",
         body: JSON.stringify(updatedFormData),
         credentials: "include",
@@ -100,7 +100,7 @@ function Application2() {
     const backendurl = import.meta.env.VITE_BACKEND_URL;
 
     try {
-      let res = await fetch(`${backendurl}/retrieveapplicationform2`, {
+      let res = await fetch(`${backendurl}/retrieveapplicationform/2`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jobpostingid: jobpostingid }),

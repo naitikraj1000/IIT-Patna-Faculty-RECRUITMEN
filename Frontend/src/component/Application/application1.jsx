@@ -3,14 +3,17 @@ import styles from "./application1.module.css";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import InputFile from "./uploadfile";
 import { saveprogress } from "../../../redux/infromationslice";
 
 function Application1() {
-  const [progresspercentage, setProgressPercentage] = useState(33);
+  const [progresspercentage, setProgressPercentage] = useState(0);
+
   const [uploading, setUploading] = useState(false);
   const location = useLocation();
   const dispatch = useDispatch();
   const saveProgress = useSelector((state) => state.information.saveProgress);
+  const no_of_required_fields = 18;
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -39,14 +42,13 @@ function Application1() {
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
+    console.log(e.target.required);
     console.log("File input changed:", files);
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]:
         type === "file" ? (files.length === 1 ? files[0] : [...files]) : value,
     }));
-
-  
   };
 
   async function uploaddocuments(file) {
@@ -89,7 +91,6 @@ function Application1() {
         }
       }
     }
-    
 
     setFormData(updatedFormData);
     const parts = location.pathname.split("/");
@@ -101,7 +102,7 @@ function Application1() {
     // updatedFormData.applicationId;
     const backendurl = import.meta.env.VITE_BACKEND_URL;
     try {
-      let res = await fetch(`${backendurl}/saveapplicationform`, {
+      let res = await fetch(`${backendurl}/saveapplicationform/1`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedFormData),
@@ -123,7 +124,7 @@ function Application1() {
     const backendurl = import.meta.env.VITE_BACKEND_URL;
 
     try {
-      let res = await fetch(`${backendurl}/retrieveapplicationform`, {
+      let res = await fetch(`${backendurl}/retrieveapplicationform/1`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jobpostingid: jobpostingid }),
@@ -145,6 +146,9 @@ function Application1() {
           temp_formData[key] = retrievedFormData[key];
         }
       }
+
+      setProgressPercentage(retrievedFormData.completepercent);
+
       setFormData(temp_formData);
     } catch (error) {
       console.error("Error retrieving application form:", error.message);
@@ -168,6 +172,7 @@ function Application1() {
         <div className={styles.biodataForm}>
           {/* Full Name */}
           <div className={styles.formGroup}>
+            <h1>{progresspercentage}</h1>
             <label className={styles.formLabel}>
               Full Name (in capital letters as per matriculation/passport
               record) : <span className={styles.required}>*</span>
@@ -206,23 +211,14 @@ function Application1() {
               Proof of Date of Birth (10th Certificate){" "}
               <span className={styles.required}>*</span>
             </label>
-
-            <label className={styles.formFile} htmlFor={"proofOfDateOfBirth"}>
-              Upload
-              {typeof formData.proofOfDateOfBirth === "string" &&
-              formData.proofOfDateOfBirth.trim() ? (
-                <p>{formData.proofOfDateOfBirth}</p>
-              ) : formData.proofOfDateOfBirth instanceof File ? (
-                <p>{formData.proofOfDateOfBirth.name}</p>
-              ) : null}
-            </label>
-            <input
+            <InputFile
+              formFile={styles.formFile}
               name="proofOfDateOfBirth"
-              type="file"
-              id="proofOfDateOfBirth"
-              
-              onChange={handleChange}
+              handleChange={handleChange}
+              data={formData.proofOfDateOfBirth}
             />
+
+
           </div>
 
           {/* Gender */}
@@ -503,7 +499,13 @@ function Application1() {
               Passport Photo <span className={styles.required}>*</span>
             </label>
 
-            <label className={styles.formFile} htmlFor={"passportPhoto"}>
+            <InputFile
+              formFile={styles.formFile}
+              name="passportPhoto"
+              handleChange={handleChange}
+              data={formData.passportPhoto}
+            />
+            {/* <label className={styles.formFile} htmlFor={"passportPhoto"}>
               Upload
               {typeof formData.passportPhoto === "string" &&
               formData.passportPhoto.trim() ? (
@@ -517,7 +519,7 @@ function Application1() {
               type="file"
               id="passportPhoto"
               onChange={handleChange}
-            />
+            /> */}
           </div>
 
           {/* Joining Time */}
@@ -576,7 +578,13 @@ function Application1() {
               Signature of Applicant <span className={styles.required}>*</span>
             </label>
 
-            <label className={styles.formFile} htmlFor={"signatureOfApplicant"}>
+            <InputFile
+              formFile={styles.formFile}
+              name="signatureOfApplicant"
+              handleChange={handleChange}
+              data={formData.signatureOfApplicant}
+            />
+            {/* <label className={styles.formFile} htmlFor={"signatureOfApplicant"}>
               Upload
               {typeof formData.signatureOfApplicant === "string" &&
               formData.signatureOfApplicant.trim() ? (
@@ -590,8 +598,7 @@ function Application1() {
               name="signatureOfApplicant"
               id="signatureOfApplicant"
               onChange={handleChange}
-            />
-
+            /> */}
           </div>
         </div>
       </div>

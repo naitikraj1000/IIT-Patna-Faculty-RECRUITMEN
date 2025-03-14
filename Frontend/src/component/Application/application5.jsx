@@ -80,7 +80,7 @@ function Application5() {
 
     const backendurl = import.meta.env.VITE_BACKEND_URL;
     try {
-      let res = await fetch(`${backendurl}/saveapplicationform5`, { // Updated endpoint for form 5
+      let res = await fetch(`${backendurl}/saveapplicationform/5`, { // Updated endpoint for form 5
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedFormData),
@@ -102,7 +102,7 @@ function Application5() {
     const backendurl = import.meta.env.VITE_BACKEND_URL;
 
     try {
-      let res = await fetch(`${backendurl}/retrieveapplicationform5`, { // Updated endpoint for form 5
+      let res = await fetch(`${backendurl}/retrieveapplicationform/5`, { // Updated endpoint for form 5
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jobpostingid: jobpostingid }),

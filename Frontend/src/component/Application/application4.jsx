@@ -3,6 +3,7 @@ import styles from "./application4.module.css"; // Using the same CSS module
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import InputFile from "./uploadfile";
 import { saveprogress } from "../../../redux/infromationslice";
 
 function Application4() {
@@ -86,7 +87,7 @@ function Application4() {
 
     const backendurl = import.meta.env.VITE_BACKEND_URL;
     try {
-      let res = await fetch(`${backendurl}/saveapplicationform4`, { // Updated endpoint
+      let res = await fetch(`${backendurl}/saveapplicationform/4`, { // Updated endpoint
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedFormData),
@@ -108,7 +109,7 @@ function Application4() {
     const backendurl = import.meta.env.VITE_BACKEND_URL;
 
     try {
-      let res = await fetch(`${backendurl}/retrieveapplicationform4`, { // Updated endpoint
+      let res = await fetch(`${backendurl}/retrieveapplicationform/4`, { // Updated endpoint
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jobpostingid: jobpostingid }),
@@ -252,7 +253,9 @@ function Application4() {
               Ph.D. Work Description <span className={styles.required}>*</span>
               <small> (Please describe briefly on a separate sheet your Ph.D. work [1 page – font size 10 (Font: Times New Roman)]. Also detail the areas of interest with work done in each case (if any))</small>
             </label>
-            <label className={styles.formFile} htmlFor={"phdWorkDocument"}>
+
+            <InputFile formFile={styles.formFile} name="phdWorkDocument" handleChange={handleChange} data={formData.phdWorkDocument} />
+            {/* <label className={styles.formFile} htmlFor={"phdWorkDocument"}>
               Upload
               {typeof formData.phdWorkDocument === "string" &&
               formData.phdWorkDocument.trim() ? (
@@ -266,7 +269,7 @@ function Application4() {
               type="file"
               id="phdWorkDocument"
               onChange={handleChange}
-            />
+            /> */}
           </div>
 
           {/* Lab Experience Document */}
@@ -275,7 +278,8 @@ function Application4() {
               Laboratory Experience Description <span className={styles.required}>*</span>
               <small> (Please describe, in brief on a separate sheet, your experience in (i) Setting up teaching and research laboratories (ii) Conducting laboratory courses & (iii) Using different types of instruments, systems, computers etc.)</small>
             </label>
-            <label className={styles.formFile} htmlFor={"labExperienceDocument"}>
+            <InputFile formFile={styles.formFile} name="labExperienceDocument" handleChange={handleChange} data={formData.labExperienceDocument} />
+            {/* <label className={styles.formFile} htmlFor={"labExperienceDocument"}>
               Upload
               {typeof formData.labExperienceDocument === "string" &&
               formData.labExperienceDocument.trim() ? (
@@ -289,7 +293,7 @@ function Application4() {
               type="file"
               id="labExperienceDocument"
               onChange={handleChange}
-            />
+            /> */}
           </div>
 
           {/* Co-Supervisor */}
