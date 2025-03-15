@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { saveprogress } from "../../../redux/infromationslice";
 import InputFile from "./uploadfile";
+import { Application3progresspercent } from "../../../redux/infromationslice";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 function Application3() {
@@ -47,14 +48,6 @@ function Application3() {
     sponsoredProjects: "",
     consultancyProjects: "",
     patents: "",
-    journalNational: "",
-    journalInternational: "",
-    conferenceRefereedNational: "",
-    conferenceUnrefereedNational: "",
-    technicalReports: "",
-    citations: "",
-    conferenceRefereedInternational: "",
-    conferenceUnrefereedInternational: "",
     booksPublished: "",
     bookChaptersPublished: "",
     researchExperience: "",
@@ -63,15 +56,54 @@ function Application3() {
     conferencePublications: "",
   });
 
-  // Handle form input changes
+  const [requiredFields, setRequiredFields] = useState({
+    pgProjects: false,
+    phdCompleted: false,
+    phdOngoing: false,
+    sponsoredProjects: false,
+    consultancyProjects: false,
+    patents: false,
+    booksPublished: false,
+    bookChaptersPublished: false,
+    researchExperience: false,
+    patentsList: false,
+    journalPublications: false,
+    conferencePublications: false,
+    researchPublications: false,
+  });
+
+  const calculateProgressPercentage = (updatedRequiredFields) => {
+    const fieldsToUse = updatedRequiredFields || requiredFields;
+    const totalFields = Object.keys(fieldsToUse).length;
+    const filledFields = Object.values(fieldsToUse).filter(Boolean).length;
+    const percentage = (filledFields / totalFields) * 100;
+    console.log(totalFields, filledFields, fieldsToUse);
+    console.log("Progress:", percentage, "%");
+    dispatch(
+      Application3progresspercent(percentage)
+    )
+    setProgressPercentage(percentage);
+  };
+
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
+    const fieldValue =
+      type === "file" ? (files.length === 1 ? files[0] : [...files]) : value;
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]:
-        type === "file" ? (files.length === 1 ? files[0] : [...files]) : value,
+    // Update formData
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: fieldValue,
     }));
+
+    if (requiredFields.hasOwnProperty(name)) {
+      const updatedRequiredFields = {
+        ...requiredFields,
+        [name]: !!fieldValue,
+      };
+      setRequiredFields(updatedRequiredFields);
+      calculateProgressPercentage(updatedRequiredFields);
+    }
   };
 
   // Document uploading function
@@ -182,6 +214,7 @@ function Application3() {
       }
       setFormData(temp_formData);
 
+
       // Set research publications if available
       if (
         retrievedFormData.researchPublications &&
@@ -194,6 +227,15 @@ function Application3() {
           Array(5).fill({ ...research_publication_format })
         );
       }
+      setProgressPercentage(retrievedFormData.completepercent);
+      let temp_requiredFields = { ...requiredFields };
+      for (let key in requiredFields) {
+        if (retrievedFormData[key]) {
+          temp_requiredFields[key] = true;
+        }
+      }
+      setRequiredFields(temp_requiredFields);
+      calculateProgressPercentage(temp_requiredFields);
     } catch (error) {
       console.error("Error retrieving application form:", error.message);
     }
@@ -244,6 +286,7 @@ function Application3() {
   return (
     <div className={styles.container}>
       {/* Research Projects Section */}
+      <h2>{progresspercentage}</h2>
       <div className={styles.educationcontainer}>
         <h2>
           Research Information <span className={styles.required}>*</span>
@@ -410,25 +453,13 @@ function Application3() {
             <span className={styles.required}>*</span>
           </label>
 
-          <InputFile  formFile={styles.fileUploadLabel} name="researchExperience" handleChange={handleChange} data={formData.researchExperience} />
-          {/* <label
-            className={styles.fileUploadLabel}
-            htmlFor="researchExperience"
-          >
-            Upload
-            {typeof formData.researchExperience === "string" &&
-            formData.researchExperience.trim() ? (
-              <p>{formData.researchExperience}</p>
-            ) : formData.researchExperience instanceof File ? (
-              <p>{formData.researchExperience.name}</p>
-            ) : null}
-            <input
-              type="file"
-              name="researchExperience"
-              id="researchExperience"
-              onChange={handleChange}
-            />
-          </label> */}
+          <InputFile
+            formFile={styles.fileUploadLabel}
+            name="researchExperience"
+            handleChange={handleChange}
+            data={formData.researchExperience}
+            required={true}
+          />
         </div>
 
         <div className={styles.fileUploadGroup}>
@@ -437,51 +468,28 @@ function Application3() {
             <span className={styles.required}>*</span>
           </label>
 
-          <InputFile  formFile={styles.fileUploadLabel} name="patentsList" handleChange={handleChange} data={formData.patentsList} />
-
-          {/* <label className={styles.fileUploadLabel} htmlFor="patentsList">
-            Upload
-            {typeof formData.patentsList === "string" &&
-            formData.patentsList.trim() ? (
-              <p>{formData.patentsList}</p>
-            ) : formData.patentsList instanceof File ? (
-              <p>{formData.patentsList.name}</p>
-            ) : null}
-            <input
-              type="file"
-              name="patentsList"
-              id="patentsList"
-              onChange={handleChange}
-            />
-          </label> */}
+          <InputFile
+            formFile={styles.fileUploadLabel}
+            name="patentsList"
+            handleChange={handleChange}
+            data={formData.patentsList}
+            required={true}
+          />
         </div>
 
         <div className={styles.fileUploadGroup}>
           <label>
             Upload Complete list of Journal Publications (APA citation style):{" "}
             <span className={styles.required}>*</span>
-          </label>   
-          
-          <InputFile formFile={styles.fileUploadLabel} name="journalPublications" handleChange={handleChange} data={formData.journalPublications} />
-          {/* <label
-            className={styles.fileUploadLabel}
-            htmlFor="journalPublications"
-          >
-            Upload
-            {typeof formData.journalPublications === "string" &&
-            formData.journalPublications.trim() ? (
-              <p>{formData.journalPublications}</p>
-            ) : formData.journalPublications instanceof File ? (
-              <p>{formData.journalPublications.name}</p>
-            ) : null}
-            <input
-              type="file"
-              name="journalPublications"
-              id="journalPublications"
-              onChange={handleChange}
-            />
-          </label> */}
+          </label>
 
+          <InputFile
+            formFile={styles.fileUploadLabel}
+            name="journalPublications"
+            handleChange={handleChange}
+            data={formData.journalPublications}
+            required={true}
+          />
         </div>
 
         <div className={styles.fileUploadGroup}>
@@ -489,25 +497,14 @@ function Application3() {
             Upload Complete list of Conference Publications/Presentations:{" "}
             <span className={styles.required}>*</span>
           </label>
-          
-          <InputFile formFile={styles.fileUploadLabel} name="conferencePublications" handleChange={handleChange} data={formData.conferencePublications} />
 
-
-          {/* <label className="styles.fileUploadLabel" htmlFor="conferencePublications">
-            Upload
-            {typeof formData.conferencePublications === "string" &&
-            formData.conferencePublications.trim() ? (
-              <p>{formData.conferencePublications}</p>
-            ) : formData.conferencePublications instanceof File ? (
-              <p>{formData.conferencePublications.name}</p>
-            ) : null}
-            <input
-              type="file"
-              name="conferencePublications"
-              id="conferencePublications"
-              onChange={handleChange}
-            />
-        </label> */}
+          <InputFile
+            formFile={styles.fileUploadLabel}
+            name="conferencePublications"
+            handleChange={handleChange}
+            data={formData.conferencePublications}
+            required={true}
+          />
         </div>
 
         <div className={styles.formGroup}>

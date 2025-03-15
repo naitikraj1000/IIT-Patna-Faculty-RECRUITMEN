@@ -2,12 +2,22 @@ import React, { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import styles from "./application.module.css";
 import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { saveprogress } from "../../redux/infromationslice";
+import { Application1progresspercent,Application2progresspercent,Application3progresspercent,Application4progresspercent,Application5progresspercent,Application6progresspercent } from "../../redux/infromationslice";
+
 function Application() {
   const navigate = useNavigate();
   const [menuExpanded, setMenuExpanded] = useState(false);
   const [pagetitle, setPagetitle] = useState("BIODATA");
   const dispatch = useDispatch();
+  const Application1progresspercent=useSelector((state) => state.information.Application1progresspercent);
+  const Application2progresspercent=useSelector((state) => state.information.Application2progresspercent);
+  const Application3progresspercent=useSelector((state) => state.information.Application3progresspercent);
+  const Application4progresspercent=useSelector((state) => state.information.Application4progresspercent);
+  const Application5progresspercent=useSelector((state) => state.information.Application5progresspercent);
+  const Application6progresspercent=useSelector((state) => state.information.Application6progresspercent);
+  
   
   function capitalizeWords(str) {
     return str.toUpperCase();
@@ -46,7 +56,7 @@ function Application() {
             <div className={styles.progressBar}>
               <div
                 className={styles.progressFill}
-                style={{ width: "20%" }}
+                style={{ width: `${Application1progresspercent}%` }}
               ></div>
             </div>
           </button>
@@ -61,7 +71,7 @@ function Application() {
             <div className={styles.progressBar}>
               <div
                 className={styles.progressFill}
-                style={{ width: "40%" }}
+                style={{ width: `${Application2progresspercent}%` }}
               ></div>
             </div>
           </button>
@@ -77,7 +87,7 @@ function Application() {
             <div className={styles.progressBar}>
               <div
                 className={styles.progressFill}
-                style={{ width: "90%" }}
+                style={{ width: `${Application3progresspercent}%` }}
               ></div>
             </div>
           </button>
@@ -92,7 +102,7 @@ function Application() {
             <div className={styles.progressBar}>
               <div
                 className={styles.progressFill}
-                style={{ width: "79%" }}
+                style={{ width: `${Application4progresspercent}%` }}
               ></div>
             </div>
           </button>
@@ -107,7 +117,7 @@ function Application() {
             <div className={styles.progressBar}>
               <div
                 className={styles.progressFill}
-                style={{ width: "60%" }}
+                style={{ width: `${Application5progresspercent}%` }}
               ></div>
             </div>
           </button>
@@ -122,7 +132,7 @@ function Application() {
             <div className={styles.progressBar}>
               <div
                 className={styles.progressFill}
-                style={{ width: "30%" }}
+                style={{ width: `${Application6progresspercent}%` }}
               ></div>
             </div>
           </button>

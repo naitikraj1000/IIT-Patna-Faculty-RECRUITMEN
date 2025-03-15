@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import InputFile from "./uploadfile";
 import { saveprogress } from "../../../redux/infromationslice";
+import { Application4progresspercent } from "../../../redux/infromationslice";
 
 function Application4() {
   const [progresspercentage, setProgressPercentage] = useState(40); // Adjust based on your progress tracking
@@ -27,14 +28,52 @@ function Application4() {
     vivaVoceDate: ""
   });
 
+  const [requiredFields, setRequiredFields] = useState({
+    teachingExperience: false,
+    coursesTaught: false,
+    specialization: false,
+    specializationDetails: false,
+    phdThesisTitle: false,
+    phdSupervisor: false,
+    phdWorkDocument: false,
+    labExperienceDocument: false,
+    thesisSubmissionDate: false,
+    vivaVoceDate: false
+  })
+
+  const calculateProgressPercentage = (updatedRequiredFields) => {
+    const fieldsToUse = updatedRequiredFields || requiredFields;
+    const totalFields = Object.keys(fieldsToUse).length;
+    const filledFields = Object.values(fieldsToUse).filter(Boolean).length;
+    const percentage = (filledFields / totalFields) * 100;
+    console.log(totalFields, filledFields, fieldsToUse);
+    console.log("Progress:", percentage, "%");
+    dispatch(
+      Application4progresspercent(percentage)
+    )
+    setProgressPercentage(percentage);
+  };
+
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
-    console.log("Input changed:", name, type === "file" ? files : value);
+    const fieldValue =
+      type === "file" ? (files.length === 1 ? files[0] : [...files]) : value;
+
+    // Update formData
     setFormData((prevFormData) => ({
       ...prevFormData,
-      [name]:
-        type === "file" ? (files.length === 1 ? files[0] : [...files]) : value,
+      [name]: fieldValue,
     }));
+
+    if (requiredFields.hasOwnProperty(name)) {
+      const updatedRequiredFields = {
+        ...requiredFields,
+        [name]: !!fieldValue, 
+      };
+      setRequiredFields(updatedRequiredFields);
+      calculateProgressPercentage(updatedRequiredFields);
+    }
+
   };
 
   async function uploaddocuments(file) {
@@ -132,6 +171,18 @@ function Application4() {
         }
       }
       setFormData(temp_formData);
+
+      setProgressPercentage(retrievedFormData.completepercent);
+
+      let temp_requiredFields = { ...requiredFields };
+      for (let key in requiredFields) {
+        if (retrievedFormData[key]) {
+          temp_requiredFields[key] = true;
+        }
+      }
+      setRequiredFields(temp_requiredFields);
+      calculateProgressPercentage(temp_requiredFields);
+
     } catch (error) {
       console.error("Error retrieving application form:", error.message);
     }
@@ -154,6 +205,7 @@ function Application4() {
         <div className={styles.biodataForm}>
           {/* Teaching Experience */}
           <div className={styles.formGroup}>
+            <h2>{progresspercentage}</h2>
             <label className={styles.formLabel}>
               Teaching Experience (in years) <span className={styles.required}>*</span>
             </label>

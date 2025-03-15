@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import InputFile from "./uploadfile";
+import { Application1progresspercent } from "../../../redux/infromationslice";
 import { saveprogress } from "../../../redux/infromationslice";
 
 function Application1() {
@@ -13,7 +14,6 @@ function Application1() {
   const location = useLocation();
   const dispatch = useDispatch();
   const saveProgress = useSelector((state) => state.information.saveProgress);
-  const no_of_required_fields = 18;
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -40,15 +40,64 @@ function Application1() {
     signatureOfApplicant: "",
   });
 
+  // State to track whether each required field is filled
+  const [requiredFields, setRequiredFields] = useState({
+    fullName: false,
+    dateOfBirth: false,
+    proofOfDateOfBirth: false,
+    gender: false,
+    maritalStatus: false,
+    permanentAddress: false,
+    addressForCorrespondence: false,
+    pinCode: false,
+    emailId: false,
+    fathersOrHusbandsName: false,
+    mobileNo: false,
+    advtNo: false,
+    fieldOfSpecialization: false,
+    citizenshipType: false,
+    category: false,
+    pwdCategory: false,
+    passportPhoto: false,
+    timeNeededBeforeJoining: false,
+    mothersName: false,
+    ageAsOnClosingDate: false,
+    signatureOfApplicant: false,
+  });
+
+  const calculateProgressPercentage = (updatedRequiredFields) => {
+    const fieldsToUse = updatedRequiredFields || requiredFields;
+    const totalFields = Object.keys(fieldsToUse).length;
+    const filledFields = Object.values(fieldsToUse).filter(Boolean).length;
+    const percentage = (filledFields / totalFields) * 100;
+    console.log(totalFields, filledFields, fieldsToUse);
+    console.log("Progress:", percentage, "%");
+    dispatch(
+      Application1progresspercent(percentage)
+    );
+    setProgressPercentage(percentage);
+  };
+
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
-    console.log(e.target.required);
-    console.log("File input changed:", files);
+    const fieldValue =
+      type === "file" ? (files.length === 1 ? files[0] : [...files]) : value;
+
+    // Update formData
     setFormData((prevFormData) => ({
       ...prevFormData,
-      [name]:
-        type === "file" ? (files.length === 1 ? files[0] : [...files]) : value,
+      [name]: fieldValue,
     }));
+
+    if (requiredFields.hasOwnProperty(name)) {
+      const updatedRequiredFields = {
+        ...requiredFields,
+        [name]: !!fieldValue, 
+      };
+      setRequiredFields(updatedRequiredFields);
+      calculateProgressPercentage(updatedRequiredFields);
+    }
+
   };
 
   async function uploaddocuments(file) {
@@ -147,9 +196,18 @@ function Application1() {
         }
       }
 
+      setFormData(temp_formData);
+
       setProgressPercentage(retrievedFormData.completepercent);
 
-      setFormData(temp_formData);
+      let temp_requiredFields = { ...requiredFields };
+      for (let key in requiredFields) {
+        if (retrievedFormData[key]) {
+          temp_requiredFields[key] = true;
+        }
+      }
+      setRequiredFields(temp_requiredFields);
+      calculateProgressPercentage(temp_requiredFields);
     } catch (error) {
       console.error("Error retrieving application form:", error.message);
     }
@@ -217,8 +275,6 @@ function Application1() {
               handleChange={handleChange}
               data={formData.proofOfDateOfBirth}
             />
-
-
           </div>
 
           {/* Gender */}
@@ -489,6 +545,7 @@ function Application1() {
               className={styles.formInput}
               placeholder="Enter Basic Pay and Scale of Pay"
               onChange={handleChange}
+              required={false}
               value={formData.presentBasicPay}
             />
           </div>

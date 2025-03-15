@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { saveprogress } from "../../../redux/infromationslice";
+import { Application5progresspercent } from "../../../redux/infromationslice";
 
 function Application5() {
   const [progresspercentage, setProgressPercentage] = useState(50); // Updated progress percentage
@@ -20,14 +21,49 @@ function Application5() {
     seminarsOrganized: ""
   });
 
+  const [requiredFields, setRequiredFields] = useState({
+    awardsHonours: false,
+    fellowProfessionalBody: false,
+    memberProfessionalBody: false,
+    editorialBoardMemberships: false,
+    seminarsOrganized: false
+  });
+
+
+  const calculateProgressPercentage = (updatedRequiredFields) => {
+    const fieldsToUse = updatedRequiredFields || requiredFields;
+    const totalFields = Object.keys(fieldsToUse).length;
+    const filledFields = Object.values(fieldsToUse).filter(Boolean).length;
+    const percentage = (filledFields / totalFields) * 100;
+    console.log(totalFields, filledFields, fieldsToUse);
+    console.log("Progress:", percentage, "%");
+
+    dispatch(
+      Application5progresspercent(percentage)
+    )
+    setProgressPercentage(percentage);
+  };
+
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
-    console.log("Input changed:", name, type === "file" ? files : value);
+    const fieldValue =
+      type === "file" ? (files.length === 1 ? files[0] : [...files]) : value;
+
+    // Update formData
     setFormData((prevFormData) => ({
       ...prevFormData,
-      [name]:
-        type === "file" ? (files.length === 1 ? files[0] : [...files]) : value,
+      [name]: fieldValue,
     }));
+
+    if (requiredFields.hasOwnProperty(name)) {
+      const updatedRequiredFields = {
+        ...requiredFields,
+        [name]: !!fieldValue, 
+      };
+      setRequiredFields(updatedRequiredFields);
+      calculateProgressPercentage(updatedRequiredFields);
+    }
+
   };
 
   async function uploaddocuments(file) {
@@ -125,6 +161,17 @@ function Application5() {
         }
       }
       setFormData(temp_formData);
+      setProgressPercentage(retrievedFormData.completepercent);
+
+      let temp_requiredFields = { ...requiredFields };
+      for (let key in requiredFields) {
+        if (retrievedFormData[key]) {
+          temp_requiredFields[key] = true;
+        }
+      }
+      setRequiredFields(temp_requiredFields);
+      calculateProgressPercentage(temp_requiredFields);
+
     } catch (error) {
       console.error("Error retrieving application form:", error.message);
     }
@@ -147,6 +194,7 @@ function Application5() {
         <div className={styles.biodataForm}>
           {/* Awards and Honours */}
           <div className={styles.formGroup}>
+            <h2>{progresspercentage}</h2>
             <label className={styles.formLabel}>
               Awards and Honours <span className={styles.required}>*</span>
             </label>

@@ -3,11 +3,12 @@ import styles from "./application2.module.css";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { Application2progresspercent } from "../../../redux/infromationslice";
 import { saveprogress } from "../../../redux/infromationslice";
 
 function Application2() {
   const saveProgress = useSelector((state) => state.information.saveProgress);
-  const [progresspercentage, setProgressPercentage] = useState(64);
+  const [progresspercentage, setProgressPercentage] = useState(0);
   const dispatch = useDispatch();
   const location = useLocation();
 
@@ -33,6 +34,83 @@ function Application2() {
     "NATURE OF DUTIES/WORK": "",
     "ORGANISATION/INSTITUTION": "",
     "ADDITIONAL REMARKS (ABOUT THE EXPERIENCE, IF ANY)": "",
+  };
+
+  const [requiredFields, setRequiredFields] = useState([
+    {
+      "SCHOOL/COLLEGE/INSTITUTE": false,
+      "DATE OF ENTRY": false,
+      "DATE OF LEAVING": false,
+      "BOARD/UNIVERSITY/INSTITUTION": false,
+      "EXAM/DEGREE/DIPLOMA PASSED": true,
+      "DISTINCTION/CLASS/DIVISION": false,
+      SUBJECTS: false,
+      "PERCENTAGE OF MARKS/CPI": false,
+      "YEAR OF PASSING": false,
+    },
+    {
+      "SCHOOL/COLLEGE/INSTITUTE": false,
+      "DATE OF ENTRY": false,
+      "DATE OF LEAVING": false,
+      "BOARD/UNIVERSITY/INSTITUTION": false,
+      "EXAM/DEGREE/DIPLOMA PASSED": true,
+      "DISTINCTION/CLASS/DIVISION": false,
+      SUBJECTS: false,
+      "PERCENTAGE OF MARKS/CPI": false,
+      "YEAR OF PASSING": false,
+    },
+    {
+      "SCHOOL/COLLEGE/INSTITUTE": false,
+      "DATE OF ENTRY": false,
+      "DATE OF LEAVING": false,
+      "BOARD/UNIVERSITY/INSTITUTION": false,
+      "EXAM/DEGREE/DIPLOMA PASSED": true,
+      "DISTINCTION/CLASS/DIVISION": false,
+      SUBJECTS: false,
+      "PERCENTAGE OF MARKS/CPI": false,
+      "YEAR OF PASSING": false,
+    },
+    {
+      "SCHOOL/COLLEGE/INSTITUTE": false,
+      "DATE OF ENTRY": false,
+      "DATE OF LEAVING": false,
+      "BOARD/UNIVERSITY/INSTITUTION": false,
+      "EXAM/DEGREE/DIPLOMA PASSED": true,
+      "DISTINCTION/CLASS/DIVISION": false,
+      SUBJECTS: false,
+      "PERCENTAGE OF MARKS/CPI": false,
+      "YEAR OF PASSING": false,
+    },
+    {
+      "SCHOOL/COLLEGE/INSTITUTE": false,
+      "DATE OF ENTRY": false,
+      "DATE OF LEAVING": false,
+      "BOARD/UNIVERSITY/INSTITUTION": false,
+      "EXAM/DEGREE/DIPLOMA PASSED": true,
+      "DISTINCTION/CLASS/DIVISION": false,
+      SUBJECTS: false,
+      "PERCENTAGE OF MARKS/CPI": false,
+      "YEAR OF PASSING": false,
+    },
+  ]);
+
+  const calculateProgressPercentage = (updatedRequiredFields) => {
+    // Calculate the progress percentage based on the required fields
+
+    const fieldsToUse = updatedRequiredFields;
+    const totalFields =
+      Object.keys(fieldsToUse).length * Object.keys(fieldsToUse[0]).length;
+    const filledFields = Object.values(fieldsToUse).reduce((acc, curr) => {
+      return acc + Object.values(curr).filter(Boolean).length;
+    }, 0);
+
+    const percentage = (filledFields / totalFields) * 100;
+    console.log(totalFields, filledFields, fieldsToUse);
+    console.log("Progress:", percentage, "%");
+    dispatch(
+      Application2progresspercent(percentage)
+    )
+    setProgressPercentage(percentage);
   };
 
   const Education_levels = ["10th", "12th", "Bachelors", "Masters", "PhD"];
@@ -91,9 +169,7 @@ function Application2() {
     }
   }
 
-
   async function retriveProgress() {
-
     console.log("Retrieve Progress in Application2");
     const parts = location.pathname.split("/");
     const jobpostingid = parts[parts.length - 2];
@@ -111,21 +187,32 @@ function Application2() {
 
       let data = await res.json();
       let retrievedFormData = data.data;
-        setEducationentry(retrievedFormData.education_details);
-        setEmploymententry(retrievedFormData.employment_details);
-        console.log("Education Details", retrievedFormData.education_details);
-        console.log("Employment Details", retrievedFormData.employment_details);
+      setProgressPercentage(retrievedFormData.completepercent);
+      setEducationentry(retrievedFormData.education_details);
+      setEmploymententry(retrievedFormData.employment_details);
 
+      console.log(retrievedFormData.education_details[0]);
+      let temp_requiredFields = [...requiredFields];
+      for (let i = 0; i < 5; i++) {
+        for (let key in temp_requiredFields[i]) {
+          if (retrievedFormData.education_details[i][key]) {
+            temp_requiredFields[i][key] = true;
+          } else {
+            temp_requiredFields[i][key] = false;
+          }
+        }
+      }
+      setRequiredFields(temp_requiredFields);
+      calculateProgressPercentage(temp_requiredFields);
     } catch (error) {
       console.error("Error retrieving application form:", error.message);
     }
   }
 
   // Retrieve progress on component mount
-    useEffect(() => {
-      retriveProgress();
-    }, []);
-
+  useEffect(() => {
+    retriveProgress();
+  }, []);
 
   // Save Progress
   useEffect(() => {
@@ -174,6 +261,19 @@ function Application2() {
           i === editingEducationIndex ? newEducationEntry : entry
         )
       );
+
+      if (editingEducationIndex <= 4) {
+        const temp_requiredFields = [...requiredFields];
+        for (let key in newEducationEntry) {
+          if (newEducationEntry[key]) {
+            temp_requiredFields[editingEducationIndex][key] = true;
+          } else {
+            temp_requiredFields[editingEducationIndex][key] = false;
+          }
+        }
+        setRequiredFields(temp_requiredFields);
+        calculateProgressPercentage(temp_requiredFields);
+      }
     } else {
       // Add new entry
       setEducationentry((prev) => [...prev, { ...newEducationEntry }]);
@@ -213,6 +313,7 @@ function Application2() {
     <div className={styles.container}>
       {/* Education Details Section */}
       <div className={styles.educationcontainer}>
+        <h2>{progresspercentage}</h2>
         <h2>
           Education Details <span className={styles.required}>*</span>
         </h2>

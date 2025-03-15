@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { saveprogress } from "../../../redux/infromationslice";
 import InputFile from "./uploadfile";
 import styles from "./application6.module.css";
+import { Application6progresspercent } from "../../../redux/infromationslice";
 
 function Application6() {
   const [progresspercentage, setProgressPercentage] = useState(33);
@@ -24,23 +25,73 @@ function Application6() {
     courtCase: "",
     declaration: "",
   });
+  const [requiredFields, setRequiredFields] = useState({
+    researchPlan: false,
+    previousApplication: false,
+    additionalRemarks: false,
+    "referrer1.name": false,
+    "referrer1.designation": false,
+    "referrer1.address": false,
+    "referrer1.email": false,
+    "referrer2.name": false,
+    "referrer2.designation": false,
+    "referrer2.address": false,
+    "referrer2.email": false,
+    "referrer3.name": false,
+    "referrer3.designation": false,
+    "referrer3.address": false,
+    "referrer3.email": false,
+    legalProceeding: false,
+    courtCase: false,
+    declaration: false,
+  });
+
+  const calculateProgressPercentage = (updatedRequiredFields) => {
+    const fieldsToUse = updatedRequiredFields || requiredFields;
+    const totalFields = Object.keys(fieldsToUse).length;
+    const filledFields = Object.values(fieldsToUse).filter(Boolean).length;
+    const percentage = (filledFields / totalFields) * 100;
+    console.log(totalFields, filledFields, fieldsToUse);
+    console.log("Progress:", percentage, "%");
+   
+    dispatch(
+      Application6progresspercent(percentage)
+    )
+
+    setProgressPercentage(percentage);
+  };
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
+    const fieldValue =
+      type === "file" ? (files.length === 1 ? files[0] : [...files]) : value;
+
+    // Handle nested fields for referrers
     if (name.includes(".")) {
-      const [parentKey, childKey] = name.split(".");
+      const [parent, child] = name.split(".");
       setFormData((prevFormData) => ({
         ...prevFormData,
-        [parentKey]: {
-          ...prevFormData[parentKey],
-          [childKey]: value,
+        [parent]: {
+          ...prevFormData[parent],
+          [child]: fieldValue,
         },
       }));
     } else {
+      // Regular fields
       setFormData((prevFormData) => ({
         ...prevFormData,
-        [name]: type === "file" ? (files.length === 1 ? files[0] : [...files]) : value,
+        [name]: fieldValue,
       }));
+    }
+
+    // Update required fields
+    if (requiredFields.hasOwnProperty(name)) {
+      const updatedRequiredFields = {
+        ...requiredFields,
+        [name]: !!fieldValue,
+      };
+      setRequiredFields(updatedRequiredFields);
+      calculateProgressPercentage(updatedRequiredFields);
     }
   };
 
@@ -125,7 +176,10 @@ function Application6() {
 
       let data = await res.json();
       let retrievedFormData = data.data;
-      console.log("Application form retrieved successfully:", retrievedFormData);
+      console.log(
+        "Application form retrieved successfully:",
+        retrievedFormData
+      );
 
       let temp_formData = { ...formData };
       for (let key in temp_formData) {
@@ -134,6 +188,20 @@ function Application6() {
         }
       }
       setFormData(temp_formData);
+      setProgressPercentage(retrievedFormData.completepercent);
+      let temp_requiredFields = { ...requiredFields };
+      for (let key in temp_requiredFields) {
+        let key_name = key;
+        if (key.includes(".")) {
+          key_name = `${key.split(".")[0]}.${key.split(".")[1]}`;
+        }
+        if (key_name in retrievedFormData) {
+          temp_requiredFields[key_name] = true;
+        }
+      }
+
+      setRequiredFields(temp_requiredFields);
+      calculateProgressPercentage(temp_requiredFields);
     } catch (error) {
       console.error("Error retrieving application form:", error.message);
     }
@@ -156,27 +224,18 @@ function Application6() {
         <div className={styles.additionalinfoform}>
           {/* Research Plan */}
           <div className={styles.formGroup}>
+            <h2>{progresspercentage}</h2>
             <label className={styles.formLabel}>
               Research Plan/ Teaching Plan/Vision and Mission for IIT Patna:{" "}
               <span className={styles.required}>*</span>
             </label>
 
-            <InputFile formFile={styles.formFile} name="researchPlan" handleChange={handleChange} data={formData.researchPlan} />
-            {/* <label className={styles.formFile} htmlFor="researchPlan">
-              Upload
-              {typeof formData.researchPlan === "string" &&
-              formData.researchPlan.trim() ? (
-                <p>{formData.researchPlan}</p>
-              ) : formData.researchPlan instanceof File ? (
-                <p>{formData.researchPlan.name}</p>
-              ) : null}
-            </label>
-            <input
+            <InputFile
+              formFile={styles.formFile}
               name="researchPlan"
-              type="file"
-              id="researchPlan"
-              onChange={handleChange}
-            /> */}
+              handleChange={handleChange}
+              data={formData.researchPlan}
+            />
           </div>
 
           {/* Previous Application */}
