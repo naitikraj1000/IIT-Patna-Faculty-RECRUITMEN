@@ -4,25 +4,49 @@ import styles from "./application.module.css";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { saveprogress } from "../../redux/infromationslice";
-import { Application1progresspercent,Application2progresspercent,Application3progresspercent,Application4progresspercent,Application5progresspercent,Application6progresspercent } from "../../redux/infromationslice";
+import getallapplicationform from "./Application/applicationpdf.jsx";
+// import { Application1progresspercent,Application2progresspercent,Application3progresspercent,Application4progresspercent,Application5progresspercent,Application6progresspercent } from "../../redux/infromationslice";
 
 function Application() {
   const navigate = useNavigate();
   const [menuExpanded, setMenuExpanded] = useState(false);
   const [pagetitle, setPagetitle] = useState("BIODATA");
   const dispatch = useDispatch();
-  const Application1progresspercent=useSelector((state) => state.information.Application1progresspercent);
-  const Application2progresspercent=useSelector((state) => state.information.Application2progresspercent);
-  const Application3progresspercent=useSelector((state) => state.information.Application3progresspercent);
-  const Application4progresspercent=useSelector((state) => state.information.Application4progresspercent);
-  const Application5progresspercent=useSelector((state) => state.information.Application5progresspercent);
-  const Application6progresspercent=useSelector((state) => state.information.Application6progresspercent);
-  
-  
+  const Application1progresspercent = useSelector(
+    (state) => state.information.Application1progresspercent
+  );
+  const Application2progresspercent = useSelector(
+    (state) => state.information.Application2progresspercent
+  );
+  const Application3progresspercent = useSelector(
+    (state) => state.information.Application3progresspercent
+  );
+  const Application4progresspercent = useSelector(
+    (state) => state.information.Application4progresspercent
+  );
+  const Application5progresspercent = useSelector(
+    (state) => state.information.Application5progresspercent
+  );
+  const Application6progresspercent = useSelector(
+    (state) => state.information.Application6progresspercent
+  );
+
   function capitalizeWords(str) {
     return str.toUpperCase();
   }
+  async function handlepdf() {
+    const parts = location.pathname.split("/");
+    const jobpostingid = parts[parts.length - 2];
 
+    console.log("Job Posting ID:", jobpostingid);
+    try {
+      let applicationform = await getallapplicationform(jobpostingid);
+      // console.log("Application form retrieved successfully", applicationform);
+      // Process the application form data as needed
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+    }
+  }
   return (
     <div className={styles.appContainer}>
       {/* Left Sidebar */}
@@ -139,13 +163,21 @@ function Application() {
         </nav>
 
         <div className={styles.sidebarActions}>
-          <button className={`${styles.btn} ${styles.exitBtn}`}>
+          <button
+            className={`${styles.btn} ${styles.exitBtn}`}
+            onClick={() => {
+              navigate("/");
+            }}
+          >
             Exit Form
           </button>
           <button className={`${styles.btn} ${styles.submitBtn}`}>
             Submit Form
           </button>
-          <button className={`${styles.btn} ${styles.previewBtn}`}>
+          <button
+            className={`${styles.btn} ${styles.previewBtn}`}
+            onClick={handlepdf}
+          >
             Preview
           </button>
         </div>
@@ -157,9 +189,13 @@ function Application() {
         <div className={styles.contentContainer}>
           <Outlet />
           <div className={styles.formButtons}>
-            <button type="button" className={styles.saveBtn} onClick={() => {
-              dispatch(saveprogress());
-            }}>
+            <button
+              type="button"
+              className={styles.saveBtn}
+              onClick={() => {
+                dispatch(saveprogress());
+              }}
+            >
               Save Progress
             </button>
             <button type="submit" className={styles.nextBtn}>

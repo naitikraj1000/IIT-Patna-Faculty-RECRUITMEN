@@ -148,7 +148,7 @@ async function getjobposting(req, res) {
 async function deletejobposting(req, res) {
     const user_id = req.user_id;
     const { job_id } = req.body;
-    
+
     try {
         // Delete all related application fields (if they exist)
         await prismadb.ApplicationField1.deleteMany({ where: { jobpostingid: job_id } });
@@ -176,7 +176,7 @@ async function deletejobposting(req, res) {
 
 async function saveapplicationform(req, res) {
     const { id } = req.params;
-
+    console.log("Save Application Form ", id);
     try {
         const { jobpostingid } = req.body;
 
@@ -198,6 +198,7 @@ async function saveapplicationform(req, res) {
 
         return res.status(200).json({ message: "Application form saved successfully", data: savedApplication });
     } catch (error) {
+        console.error("Application form error", error);
         return res.status(500).json({ message: error.message });
     }
 }
@@ -225,8 +226,39 @@ async function retrieveapplicationform(req, res) {
         const applicationform = await prismadb[tableName].findUnique({
             where: { jobpostingid }
         });
-       console.log("Application form retrieved successfully", applicationform);
+        console.log("Application form retrieved successfully", applicationform);
         return res.status(200).json({ message: "Application form retrieved successfully", data: applicationform });
+    } catch (error) {
+        console.error("Application form error", error);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+
+async function getallapplicationform(req, res) {
+    const jobpostingid = req.params.id;
+    try {
+        const [
+            applicationField1,
+            applicationField2,
+            applicationField3,
+            applicationField4,
+            applicationField5,
+            applicationField6,
+        ] = await Promise.all([
+            prismadb.applicationField1.findUnique({ where: { jobpostingid } }),
+            prismadb.applicationField2.findUnique({ where: { jobpostingid } }),
+            prismadb.applicationField3.findUnique({ where: { jobpostingid } }),
+            prismadb.applicationField4.findUnique({ where: { jobpostingid } }),
+            prismadb.applicationField5.findUnique({ where: { jobpostingid } }),
+            prismadb.applicationField6.findUnique({ where: { jobpostingid } }),
+        ]);
+
+        return res.status(200).json({ 
+            message: "Application form retrieved successfully", 
+            data: [applicationField1, applicationField2, applicationField3, 
+                  applicationField4, applicationField5, applicationField6] 
+        });
     } catch (error) {
         console.error("Application form error", error);
         return res.status(500).json({ message: error.message });
@@ -236,6 +268,6 @@ async function retrieveapplicationform(req, res) {
 
 
 
-
 export default jobposting;
-export { getjobposting, deletejobposting, saveapplicationform,retrieveapplicationform };
+export { getallapplicationform };
+export { getjobposting, deletejobposting, saveapplicationform, retrieveapplicationform };

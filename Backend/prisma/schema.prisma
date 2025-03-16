@@ -114,14 +114,6 @@ model ApplicationField3 {
   sponsoredProjects                 String
   consultancyProjects               String
   patents                           String
-  journalNational                   String
-  journalInternational              String
-  conferenceRefereedNational        String
-  conferenceUnrefereedNational      String
-  technicalReports                  String
-  citations                         String
-  conferenceRefereedInternational   String
-  conferenceUnrefereedInternational String
   booksPublished                    String
   bookChaptersPublished             String
   researchExperience                String

@@ -3,7 +3,7 @@ import { forgetpassword, resetpassword, verifytoken, emailverification, signin, 
 import authenticate from "../Component/authentication.js";
 import jobposting from "../Component/jobposting.js";
 import { getjobposting, deletejobposting, saveapplicationform, retrieveapplicationform } from "../Component/jobposting.js";
-
+import { getallapplicationform } from "../Component/jobposting.js";
 import multer_upload from "../multer/multer.js";
 import { handleuploaddocument } from "../multer/multer.js";
 const router = Router();
@@ -13,6 +13,7 @@ router.get('/', (req, res) => {
     res.send(' Request throught router');
 });
 
+router.get("/getallapplicationform/:id", authenticate, getallapplicationform);
 router.post("/uploaddocument", authenticate, multer_upload.single("file"), handleuploaddocument);
 router.post("/retrieveapplicationform/:id", authenticate, retrieveapplicationform);
 router.post("/saveapplicationform/:id", authenticate, saveapplicationform)
