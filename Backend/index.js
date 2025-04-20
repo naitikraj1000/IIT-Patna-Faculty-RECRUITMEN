@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 import { connectdb } from './Database/db.js';
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
+import { connectRedis } from './redis/redis.js';
 const app = express();
 dotenv.config();
 
@@ -79,6 +80,7 @@ app.get('/', (req, res) => {
 
 
 connectdb();
+connectRedis();
 app.use("/api/v1", router);
 
 app.listen(process.env.PORT, () => {

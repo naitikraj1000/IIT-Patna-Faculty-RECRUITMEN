@@ -3,6 +3,7 @@ import prismadb from '../Database/db.js';
 import nodemailer from 'nodemailer';
 import jsonwebtoken from 'jsonwebtoken';
 import { forgetpasswordmail, emailverificationmail } from '../Email/email.js';
+import redis from '../redis/redis.js';
 
 async function authenticate(req, res, next) {
 
@@ -24,6 +25,53 @@ async function authenticate(req, res, next) {
     next();
 
 }
+
+const handleLoginLimit = async (user_id, ispasswordmatch) => {
+    const MAX_LOGIN_ATTEMPTS = 5;
+    const BLOCK_TIME = 15 * 60; // 15 minutes in seconds
+    const LOGIN_ATTEMPT = await redis.get(user_id);
+
+    if (ispasswordmatch) {
+        // user has given the correct password
+        // there is no entry in redis so no need to do anything
+        if (!LOGIN_ATTEMPT) {
+            return { isAllowed: false, message: "User logged in successfully" };
+        } else {
+            // user has given the correct password but there is an entry in redis
+            // we have to check the login attempts
+            if (LOGIN_ATTEMPT < MAX_LOGIN_ATTEMPTS) {
+                // user has given the correct password and login attempts are less than max login attempts
+                // so we can delete the entry in redis
+                await redis.del(user_id);
+                return { isAllowed: true, message: "User logged in successfully" };
+            } else {
+                // user has given the correct password but login attempts are more than max login attempts
+                // we can't allow the user to login
+                return { isAllowed: false, message: "User is blocked" };
+            }
+        }
+
+    } else {
+        if (!LOGIN_ATTEMPT) {
+            //  user is first time trying to login and password is wrong
+            // so we have to set the entry in redis
+            await redis.set(user_id, 1, 'EX', BLOCK_TIME);
+            return { isAllowed: false, message: `Password is incorrect and Remaining Attemps is ${MAX_LOGIN_ATTEMPTS-1}` };
+        } else {
+            // Increment the login attempts
+            const attempts = parseInt(LOGIN_ATTEMPT) + 1;
+            await redis.set(user_id, attempts, 'EX', BLOCK_TIME);
+            if (attempts >= MAX_LOGIN_ATTEMPTS) {
+                // User is blocked
+                return { isAllowed: false, message: "User is blocked" };
+            } else {
+                // User is not blocked
+                return { isAllowed: false, message: `Password is incorrect and Remaining Attemps is ${MAX_LOGIN_ATTEMPTS-attempts}` };
+            }
+        }
+    }
+
+};
 
 
 async function verifytoken(req, res) {
@@ -136,8 +184,10 @@ async function signin(req, res) {
 
 
         const passwordMatch = await bcrypt.compare(password, user.password);
-        if (!passwordMatch) {
-            return res.status(400).json({ message: "Invalid credentials" });
+
+        let { isAllowed, message } = await handleLoginLimit(user.id, passwordMatch);
+        if (!isAllowed) {
+            return res.status(400).json({ message: message });
         }
 
         const payload = {
@@ -152,6 +202,7 @@ async function signin(req, res) {
             httpOnly: true
 
         });
+
 
         return res.status(200).json({ message: "User logged in successfully", user_id: user.id });
 
