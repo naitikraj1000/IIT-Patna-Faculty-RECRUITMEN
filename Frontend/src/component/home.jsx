@@ -17,7 +17,23 @@ export default function Home() {
   useEffect(() => {
     fetchJobPostings();
   }, []);
+     
+  const handleLogout = async () => {
+      try {
+        const res = await fetch(`${backendurl}/signout`, {
+          method: "GET",
+          credentials: "include",
+        });
 
+        if (!res.ok) throw new Error("Failed to log out.");
+
+        toast.success("Logged out successfully! ✅");
+        navigate("/signin");
+      } catch (error) {
+        console.error(error.message);
+        toast.error("Error logging out.");
+      }
+  }
   const fetchJobPostings = async () => {
     try {
       const res = await fetch(`${backendurl}/getjobposting`, {
@@ -117,7 +133,7 @@ export default function Home() {
         Create New Application
       </button>
 
-      <button className={styles.logoutButton}>Logout</button>
+      <button className={styles.logoutButton} onClick={handleLogout}>Logout</button>
 
       {open && (
         <div className={styles.overlay}>

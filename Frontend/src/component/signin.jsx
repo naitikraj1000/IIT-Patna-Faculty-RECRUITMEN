@@ -27,6 +27,8 @@ const getRandomStyle = () => {
   };
 };
 
+
+
 export default function SignIn() {
   const navigate = useNavigate();
   const [captchaText, setCaptchaText] = useState("");
@@ -36,6 +38,8 @@ export default function SignIn() {
   const [resetEmail, setResetEmail] = useState("");
   const dispatch = useDispatch();
 
+
+
   useEffect(() => {
     refreshCaptcha();
   }, []);
@@ -44,6 +48,35 @@ export default function SignIn() {
     setCaptchaText(generateCaptcha());
     setRandomStyle(getRandomStyle());
   };
+
+
+  const forgotPassword = async () => {
+    const email = resetEmail;
+    if (!email) {
+      toast.error("Please enter your email", { position: "top-right" });
+      return;
+    }
+    console.log(" Reset Password Email", email);
+    const backendurl = import.meta.env.VITE_BACKEND_URL;
+    try {
+
+      const res = await fetch(`${backendurl}/forgetpassword`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(data.message, { position: "top-right" });
+      } else {
+        toast.error(data.message, { position: "top-right" });
+      }
+    }
+    catch (error) {
+      console.error(error.message);
+      toast.error("Error sending reset email", { position: "top-right" });
+    }
+  }
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -59,6 +92,7 @@ export default function SignIn() {
     }
 
     const backendurl = import.meta.env.VITE_BACKEND_URL;
+    console.log(backendurl);
 
     try {
       let res = await fetch(`${backendurl}/signin`, {
@@ -67,9 +101,9 @@ export default function SignIn() {
         body: JSON.stringify({ email, password }),
         credentials: "include",
       });
-      
+
       let data = await res.json();
-      
+
       if (res.ok) {
         toast.success(data.message, { position: "top-right" });
         dispatch(authchange({ auth: true }));
@@ -79,6 +113,7 @@ export default function SignIn() {
         toast.error(data.message, { position: "top-right" });
       }
     } catch (error) {
+      console.error(error.message);
       toast.error(error.message, { position: "top-right" });
     }
   };
@@ -92,7 +127,7 @@ export default function SignIn() {
           <form onSubmit={handleLogin}>
             <label>Email</label>
             <input type="email" name="email" placeholder="test@test.com" required />
-            
+
             <label>Password</label>
             <div className={styles.passwordBox}>
               <input type={isPasswordVisible ? "text" : "password"} name="password" placeholder="*******" required />
@@ -100,7 +135,7 @@ export default function SignIn() {
                 {isPasswordVisible ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>
-            
+
             <div className={styles.captchaBox}>
               <p className={styles.captchaText}>
                 {captchaText.split("").map((char, index) => (
@@ -109,22 +144,22 @@ export default function SignIn() {
               </p>
               <button type="button" onClick={refreshCaptcha} className={styles.refreshCaptcha}>↻</button>
             </div>
-            
+
             <input type="text" name="captchaInput" placeholder="Enter Captcha" required />
             <button type="submit" className={styles.loginBtn}>Login</button>
           </form>
-          
+
           <p onClick={() => setIsModalOpen(true)} className={styles.forgotPassword}>Forgot Password?</p>
           <p className={styles.centerText}><a href="/signup">Don't have an Account? Sign Up</a></p>
         </div>
-        
+
         {isModalOpen && (
           <div className={styles.modalOverlay}>
             <div className={styles.modal}>
               <button className={styles.closeModal} onClick={() => setIsModalOpen(false)}>×</button>
               <h3>Reset Password</h3>
               <input type="email" placeholder="Enter your email" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} required />
-              <button className={styles.resetBtn} onClick={() => alert("Reset link sent to email")}>Send Email</button>
+              <button className={styles.resetBtn} onClick={forgotPassword}>Send Email</button>
             </div>
           </div>
         )}

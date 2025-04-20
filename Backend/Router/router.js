@@ -27,14 +27,7 @@ router.delete("/deletejobposting", authenticate, deletejobposting);
 router.post("/forgetpassword", forgetpassword);
 router.post("/resetpassword", resetpassword);
 router.get("/emailverification/:token", emailverification);
-// router.get("/resetpassword/:token", );
-
-
-
-
-
-
-
+router.post("/resetpassword/:token", resetpassword);
 
 
 export default router;

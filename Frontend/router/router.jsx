@@ -10,8 +10,10 @@ import Application3 from "../src/component/Application/application3";
 import Application4 from "../src/component/Application/application4";
 import Application5 from "../src/component/Application/application5";
 import Application6 from "../src/component/Application/application6";
+import ResetPassword from "../src/component/resetpassword"
 import { PDFViewer } from "@react-pdf/renderer";
 import {FacultyApplicationForm} from "../src/component/Application/applicationpdf";
+import EmailVerification from "../src/component/emailverification";
 
 
 // const PDFViewerPage = () => (
@@ -57,6 +59,13 @@ const router = createBrowserRouter([
     path: "/signup",
     element: <SignUp />,
   },
+  {
+    path:"/resetpassword/:token",
+    element: <ResetPassword />
+  },{
+    path:"emailverification/:token",
+    element: <EmailVerification />
+  }
   // {
   //   path:"/test",
   //   element: <PDFViewerPage />

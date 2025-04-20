@@ -4,10 +4,10 @@ import nodemailer from 'nodemailer';
 import jsonwebtoken from 'jsonwebtoken';
 import { forgetpasswordmail, emailverificationmail } from '../Email/email.js';
 
-async function authenticate(req, res,next) {
+async function authenticate(req, res, next) {
 
     const token = req.cookies.token;
- 
+
     if (!token) {
         return res.status(401).json({ message: "No token provided" });
     }
@@ -30,17 +30,17 @@ async function verifytoken(req, res) {
     try {
         const token = req.cookies.token;
         console.log("Verifying Token:", token);
-        
+
         if (!token) {
             return res.status(401).json({ message: "No token provided" });
         }
 
         // Verify token synchronously
         const decoded = jsonwebtoken.verify(token, process.env.JWT_SECRET);
-        
+
         console.log("User id:", decoded.id);
-       
-    
+
+
         return res.status(200).json({ message: "Token verified", user_id: decoded.id });
 
     } catch (err) {
@@ -54,7 +54,7 @@ async function signup(req, res) {
     const { name, email, password } = req.body;
 
 
-     console.log(" Signup", name, email, password)
+    console.log(" Signup", name, email, password)
 
     if (!name || !email || !password) {
         return res.status(400).json({ message: "Please enter all fields" });
@@ -114,7 +114,9 @@ async function signin(req, res) {
         return res.status(400).json({ message: "Please enter all fields" });
     }
 
-  
+    console.log(" Sign in ", email, password)
+
+
 
     try {
         let user = await prismadb.user.findUnique({
@@ -164,7 +166,6 @@ async function signin(req, res) {
 
 
 async function signout(req, res) {
-
     res.clearCookie('token');
     return res.status(200).json({ message: "User logged out successfully" });
 
@@ -174,6 +175,7 @@ async function signout(req, res) {
 async function forgetpassword(req, res) {
 
     const { email } = req.body;
+    console.log("Forget Password", email)
     if (!email) {
         return res.status(400).json({ message: "Please enter email" });
     }
@@ -203,8 +205,8 @@ async function forgetpassword(req, res) {
 
 
 async function resetpassword(req, res) {
-
-    const { password, token } = req.body;
+    const { token } = req.params;
+    const { password } = req.body;
 
     if (!password) {
         return res.status(400).json({ message: "Please enter password" });
@@ -214,38 +216,29 @@ async function resetpassword(req, res) {
         return res.status(400).json({ message: "Invalid token" });
     }
 
-    jsonwebtoken.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-
-        if (err) {
-            return res.status(401).json({ message: err });
-        }
-
-        // console.log("Decoded", decoded);
-        req.userId = decoded.id;
-
-    });
+    let decoded;
+    try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+        console.error("JWT verify error:", err);
+        return res.status(401).json({ message: "Invalid or expired token" });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    // console.log(req.userId, hashedPassword, password);
+
     try {
         await prismadb.user.update({
-            where: {
-                id: req.userId
-            },
-            data: {
-                password: hashedPassword
-            }
+            where: { id: decoded.id },
+            data: { password: hashedPassword }
         });
 
         return res.status(200).json({ message: "Password reset successfully" });
 
     } catch (error) {
-        console.log(error)
-        return res.status(500).json({ message: error });
+        console.error("DB error:", error);
+        return res.status(500).json({ message: "Server error" });
     }
-
 }
-
 
 function emailverification(req, res) {
 

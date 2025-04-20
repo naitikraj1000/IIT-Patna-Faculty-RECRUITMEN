@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
 import styles from "./signup.module.css"; // Import CSS module
+import { toast } from "react-toastify";
 
 const generateCaptcha = () => {
   const chars =
@@ -47,18 +48,47 @@ export default function SignUp() {
     setRandomStyle(getRandomStyle());
   };
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      alert("Passwords do not match. Please try again.");
+      toast.error("Passwords do not match", {
+        position: "top-right",
+      });
       return;
     }
     if (captchaInput !== captchaText) {
-      alert("Captcha does not match. Please try again.");
+      toast.error("Captcha does not match. Please try again.", {
+        position: "top-right",
+      });
       refreshCaptcha();
       return;
     }
-    navigate("/");
+    const backendurl = import.meta.env.VITE_BACKEND_URL;
+    if (!name || !email || !password) {
+      toast.error("Please fill all the fields", { position: "top-right" });
+      return;
+    }
+
+    try {
+      const res = await fetch(`${backendurl}/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(data.message, { position: "top-right" });
+        navigate("/signin");
+      } else {
+        toast.error(data.message, { position: "top-right" });
+      }
+    }
+    catch (error) {
+      console.error(error.message);
+      toast.error("Error signing up", { position: "top-right" });
+    }
+
   };
 
   return (
